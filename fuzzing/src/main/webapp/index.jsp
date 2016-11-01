@@ -134,6 +134,7 @@
         unique: "1"
     });
 </script>
+<scrip src="js/myapp.js"></scrip>
 </body>
 
 </html>

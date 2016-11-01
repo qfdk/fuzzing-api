@@ -13,9 +13,8 @@ import javax.ws.rs.core.Response;
 @Path("v1")
 public class Api {
 
-
     public Api() {
-        System.out.println("api init...");
+        System.out.println("[+] Fuzzing api init...");
     }
     /**
      * http://localhost:8080/api/v1/getUrl
@@ -27,7 +26,9 @@ public class Api {
     @Path("getStatus")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUrl() throws Exception {
-        return Response.status(200).entity("api works").build();
+        return Response.status(200).entity("{status:ok,msg:api works!}").build();
     }
+
+
 
 }
