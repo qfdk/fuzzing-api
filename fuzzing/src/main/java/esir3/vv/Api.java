@@ -84,37 +84,33 @@ public class Api {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getPath(@QueryParam("url") String url) throws Exception {
 
-		url = url.replace("\"", "");
+		JSONObject ret = new JSONObject();
 		FuzzingData data = new FuzzingData();
-		System.out.println("URI =======> "+url);
-		String specSwagger = Tools.sendGet(url);
-		if(specSwagger.split("#")[0].equals("200"))
-		{
-			Swagger swagger = new SwaggerParser().parse(specSwagger.split("#")[1]);
 
-			URI uri = new URI(url);
+		url = url.replace("\"", "");
+		URI uri = new URI(url);
 
-			JSONObject ret = new JSONObject();
+		String specSwagger = Tools.callURL(url);
+		Swagger swagger = new SwaggerParser().parse(specSwagger);
 
-			List<String> pathList = new ArrayList<>();
-			if(swagger != null){
-				Map<String, io.swagger.models.Path> paths = swagger.getPaths();
+		List<String> pathList = new ArrayList<>();
+		if(swagger != null){
+			Map<String, io.swagger.models.Path> paths = swagger.getPaths();
 
-				for (String path : paths.keySet()) {
-					pathList.add(uri.getScheme()+"://"+uri.getHost()+path);
-				}
+			for (String path : paths.keySet()) {
+				pathList.add(uri.getScheme()+"://"+uri.getHost()+path);
 			}
-			ret.put("hostname",uri.getHost());
-			ret.put("paths",pathList);
-			ret.put("url", url);
-
-			data.setHostname(uri.getHost());
-			data.setPaths(pathList);
-
-			System.out.println(ret);
-			//		return Response.status(200).entity("{status:ok,msg:api works!}").build();
-			return Response.status(200).entity(ret.toString()).build(); 
 		}
-		return Response.status(520).entity("{status:no,msg:bad link}").build();
+		ret.put("hostname",uri.getHost());
+		ret.put("paths",pathList);
+		ret.put("swaggerSource", url);
+
+		data.setHostname(uri.getHost());
+		data.setPaths(pathList);
+
+		System.out.println(ret);
+		//		return Response.status(200).entity("{status:ok,msg:api works!}").build();
+		return Response.status(200).entity(ret.toString()).build(); 
 	}
+
 }
