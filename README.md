@@ -24,7 +24,7 @@ default `swagger.json` : http://localhost:8080/swagger.json
 
 ## todo list
 
-[X] web ui
-[ ] call back
-[ ] backend singleton
+- [X] web ui
+- [ ] call back
+- [ ] backend singleton
 
