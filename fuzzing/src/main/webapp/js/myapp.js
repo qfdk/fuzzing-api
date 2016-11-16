@@ -3,11 +3,17 @@
  */
 
 $('#go').click(function () {
-    $.get('http://localhost:8080/api/v1/getPaths?url='+$('#url').val());
+    send($('#url').val());
 });
 
 $('#go').keyup(function (evt) {
     if (evt.keyCode == 13) {
-        $.get('http://localhost:8080/api/v1/getPaths?url='+$('#url').val());
+        send($('#url').val());
     }
 });
+
+function send(json) {
+    $.get('http://localhost:8080/api/v1/getPath?url=' + json, function (data, b, c) {
+        $('.active').append(data.paths);
+    })
+}
