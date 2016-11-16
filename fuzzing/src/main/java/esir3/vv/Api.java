@@ -87,11 +87,9 @@ public class Api {
 		JSONObject ret = new JSONObject();
 		FuzzingData data = new FuzzingData();
 
-		url = url.replace("\"", "");
 		URI uri = new URI(url);
 
-		String specSwagger = Tools.callURL(url);
-		Swagger swagger = new SwaggerParser().parse(specSwagger);
+		Swagger swagger = new SwaggerParser().read(url);
 
 		List<String> pathList = new ArrayList<>();
 		if(swagger != null){
