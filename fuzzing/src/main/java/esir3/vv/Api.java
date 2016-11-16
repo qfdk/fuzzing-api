@@ -1,6 +1,7 @@
 package esir3.vv;
 
 
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.GET;
@@ -18,56 +19,56 @@ import io.swagger.parser.SwaggerParser;
 @Path("v1")
 public class Api {
 
-	private FuzzingData data;
-	
-	public Api() {
-		System.out.println("[+] Fuzzing api init...");
+    private FuzzingData data;
 
+    public Api() {
+        System.out.println("[+] Fuzzing api init...");
+    }
 
-	}
-	/**
-	 * http://localhost:8080/api/v1/getUrl
-	 *
-	 * @return
-	 * @throws Exception
-	 */
-	@GET
-	@Path("getStatus")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getStatus() throws Exception {
+    /**
+     * http://localhost:8080/api/v1/getStatus
+     *
+     * @return
+     * @throws Exception
+     */
+    @GET
+    @Path("getStatus")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getStatus() throws Exception {
 
-		Swagger swagger = new SwaggerParser().read("./src/main/resources/swagger.json");
+        Swagger swagger = new SwaggerParser().read("./src/main/resources/swagger.json");
 
-		Map<String, io.swagger.models.Path> paths = swagger.getPaths();
+        Map<String, io.swagger.models.Path> paths = swagger.getPaths();
 
-		System.out.println("------- List of all paths ----------");
-		for(Map.Entry<String, io.swagger.models.Path> entry : paths.entrySet()) {
-			System.out.println(entry.getKey());
-		}
+        System.out.println("------- List of all paths ----------");
+        for (Map.Entry<String, io.swagger.models.Path> entry : paths.entrySet()) {
+            System.out.println(entry.getKey());
+        }
 
-		return Response.status(200).entity("{status:ok,msg:api works!}").build();
-	}
-	
-	/**
-	 * http://localhost:8080/api/v1/getUrl
-	 *
-	 * @return
-	 * @throws Exception
-	 */
-	@GET
-	@Path("an")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response analyse() throws Exception {
+        return Response.status(200).entity("{status:ok,msg:api works!}").build();
+    }
 
-		Swagger swagger = new SwaggerParser().read("./src/main/resources/swagger.json");
+    /**
+     * http://localhost:8080/api/v1/getUrl
+     *
+     * @return
+     * @throws Exception
+     */
+    @GET
+    @Path("analyse")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response analyse() throws Exception {
 
-		Map<String, io.swagger.models.Path> paths = swagger.getPaths();
+//        List<String> paths=data.getPaths();
+//        String hostname=data.getHostname();
+//        String contentType= data.getContentType();
+//
+//        for(String path:paths)
+//        {
+//
+//        }
+        System.out.println(Tools.sendGet("http://qfdk.me"));
 
-		System.out.println("------- List of all paths ----------");
-		for(Map.Entry<String, io.swagger.models.Path> entry : paths.entrySet()) {
-			System.out.println(entry.getKey());
-		}
-
-		return Response.status(200).entity("{status:ok,msg:api works!}").build();
-	}
+        return Response.status(200).entity("{status:ok,msg:sasa}").build();
+    }
 }
