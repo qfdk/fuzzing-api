@@ -51,7 +51,7 @@
             <label for="url">URL : </label>
                 <input type="text" class="form-control" id="url" placeholder="http://">
         </div>
-        <button type="submit" class="btn btn-primary">Allez test!</button>
+        <button id="go" type="submit" class="btn btn-primary">Allez test!</button>
     </form>
     <br/>
     <div class="jumbotron" style="background-color: #fff9f0;">

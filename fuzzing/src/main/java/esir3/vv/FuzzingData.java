@@ -7,11 +7,20 @@ public class FuzzingData {
 	private String hostname;
 	private String contentType;
 	private List<String> paths;
-	
-	public FuzzingData() {
+
+	private static FuzzingData instance=null;
+
+	static FuzzingData getInstance() {
+		if (instance == null) {
+			instance = new FuzzingData();
+		}
+		return instance;
+	}
+
+	private FuzzingData() {
 	}
 	
-	public FuzzingData(String hostname, String contentType, List<String> paths) {
+	private FuzzingData(String hostname, String contentType, List<String> paths) {
 		this.hostname = hostname;
 		this.contentType = contentType;
 		this.paths = paths;

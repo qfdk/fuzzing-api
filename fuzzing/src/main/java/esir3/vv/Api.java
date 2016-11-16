@@ -5,6 +5,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -19,9 +20,11 @@ import org.json.JSONObject;
  */
 @Path("v1")
 public class Api {
+
 	private FuzzingData data;
 
 	public Api() {
+        data=FuzzingData.getInstance();
 		System.out.println("[+] Fuzzing api init...");
 	}
 
@@ -48,10 +51,10 @@ public class Api {
 	@Path("analyse")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response analyse() throws Exception {
-		List<String> urls=new ArrayList<>();
-		urls.add("http://qfdk.me");
-		urls.add("http://google.com");
-		data = new FuzzingData("localhost","html",urls);
+//		List<String> urls=new ArrayList<>();
+//		urls.add("http://qfdk.me");
+//		urls.add("http://google.com");
+//		data = new FuzzingData("localhost","html",urls);
 
 		List<String> paths=data.getPaths();
 		List<String> pathsValided= new ArrayList<>();
@@ -59,6 +62,7 @@ public class Api {
 		String hostname=data.getHostname();
 		String contentType= data.getContentType();
 
+        System.out.println(hostname);
 		JSONObject jsonObject = new JSONObject();
 
 		jsonObject.put("hostname",hostname);
@@ -66,7 +70,14 @@ public class Api {
 
 		for(String path:paths)
 		{
-			pathsValided.add(Tools.sendGet(path).split("#")[0]+"#"+path);
+            String tmp=null;
+            try {
+                tmp=Tools.sendGet(path);
+                pathsValided.add(tmp.split("#")[0]+"#"+path);
+            }catch (Exception e)
+            {
+                pathsValided.add("FFF#"+path);
+            }
 		}
 		jsonObject.put("paths",pathsValided);
 		return Response.status(200).entity(jsonObject.toString()).build();
@@ -84,12 +95,8 @@ public class Api {
 	public Response getPath(@QueryParam("url") String url) throws Exception {
 
 		JSONObject ret = new JSONObject();
-		FuzzingData data = new FuzzingData();
-
 		URI uri = new URI(url);
-
 		Swagger swagger = new SwaggerParser().read(url);
-
 		List<String> pathList = new ArrayList<>();
 		if(swagger != null){
 			Map<String, io.swagger.models.Path> paths = swagger.getPaths();
@@ -101,12 +108,10 @@ public class Api {
 		ret.put("hostname",uri.getHost());
 		ret.put("paths",pathList);
 		ret.put("swaggerSource", url);
-
 		data.setHostname(uri.getHost());
 		data.setPaths(pathList);
-
-		System.out.println(ret);
-		return Response.status(200).entity(ret.toString()).build();
+        System.out.print(pathList);
+		return Response.temporaryRedirect(new URI("http://localhost:8080/api/v1/analyse")).build();
 	}
 
 }

@@ -4,18 +4,16 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.Charset;
 
 import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
 
 /**
  * Created by qfdk on 2016/11/16.
  */
-public class Tools {
+class Tools {
 
     // HTTP GET request
-    public static String sendGet(String url) throws Exception {
+    static String sendGet(String url) throws Exception {
 
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
