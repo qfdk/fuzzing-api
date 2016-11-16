@@ -8,6 +8,9 @@ public class FuzzingData {
 	private String contentType;
 	private List<String> paths;
 	
+	public FuzzingData() {
+	}
+	
 	public FuzzingData(String hostname, String contentType, List<String> paths) {
 		this.hostname = hostname;
 		this.contentType = contentType;
