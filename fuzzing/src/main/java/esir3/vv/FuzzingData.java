@@ -13,7 +13,7 @@ public class FuzzingData {
 		this.contentType = contentType;
 		this.paths = paths;
 	}
-	
+
 	public String getHostname() {
 		return hostname;
 	}

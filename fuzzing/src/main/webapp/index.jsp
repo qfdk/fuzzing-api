@@ -9,11 +9,7 @@
     <title>Fuzzing!</title>
     <!-- Bootstrap CSS -->
     <link rel="icon" href="http://qfdk.free.fr/favicon.ico" type="image/vnd.microsoft.icon">
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             padding: 70px 0 20px 0;
@@ -134,7 +130,6 @@
         unique: "1"
     });
 </script>
-<scrip src="js/myapp.js"></scrip>
+<script src="js/myapp.js"></script>
 </body>
-
 </html>
