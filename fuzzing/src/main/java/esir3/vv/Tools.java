@@ -39,4 +39,23 @@ class Tools {
         //print result
         return responseCode+"#"+response.toString();
     }
+    
+	 /*** Pas beau !!
+	 * @param type
+	 * @return
+	 */
+	public static  String generateTestData(String type){
+		switch (type) {
+		case "integer":
+		case "Integer":
+		case "int":
+			return "10";
+		case "STRING":
+		case "string":
+		case "str":
+			return "dataGeneratedByYoussouf";
+		default :
+			return "dataGeneratedByYoussouf";
+		}
+	}
 }

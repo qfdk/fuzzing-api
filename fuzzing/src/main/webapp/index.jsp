@@ -46,14 +46,19 @@
             <h1>Fuzzing or Amazing</h1>
         </div>
     </div>
-    <form class="form-inline" style="text-align: center;">
-        <div class="form-group">
-            <label for="url">URL : </label>
-                <input type="text" class="form-control" id="url" placeholder="http://">
+
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="input-group">
+                <input id="url" type="text" class="form-control" value="http://petstore.swagger.io/v2/swagger.json" placeholder="http://localhost:8080/swagger.json">
+                <span class="input-group-btn">
+					<button id="go" class="btn btn-primary"  data-toggle="modal" data-target="#myModal" type="button">Go!</button>
+            </span>
+            </div>
         </div>
-        <button id="go" type="submit" class="btn btn-primary">Allez test!</button>
-    </form>
-    <br/>
+    </div>
+
+    <br>
     <div class="jumbotron" style="background-color: #fff9f0;">
         <table class="table">
             <thead>
@@ -64,51 +69,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr class="active">
-                <th scope="row">1</th>
-                <td>Column content</td>
-                <td>F</td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>Column content</td>
-                <td>F</td>
-            </tr>
-            <tr class="success">
-                <th scope="row">3</th>
-                <td>Column content</td>
-                <td>T</td>
-            </tr>
-            <tr>
-                <th scope="row">4</th>
-                <td>Column content</td>
-                <td>T</td>
-            </tr>
-            <tr class="info">
-                <th scope="row">5</th>
-                <td>Column content</td>
-                <td>T</td>
-            </tr>
-            <tr>
-                <th scope="row">6</th>
-                <td>Column content</td>
-                <td>F</td>
-            </tr>
-            <tr class="warning">
-                <th scope="row">7</th>
-                <td>Column content</td>
-                <td>Loading ...</td>
-            </tr>
-            <tr>
-                <th scope="row">8</th>
-                <td>Column content</td>
-                <td>Loading ...</td>
-            </tr>
-            <tr class="danger">
-                <th scope="row">9</th>
-                <td>Column content</td>
-                <td>Loading ...</td>
-            </tr>
+
             </tbody>
         </table>
     </div>
@@ -121,15 +82,24 @@
         License v2.0</a>, documentation under <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank">CC
         BY 4.0</a>.
     </p>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Information :)</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info" role="alert">Loading ...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/basket.js/0.5.2/basket.full.min.js"></script>
-<script type="text/javascript">
-    basket.require({
-        url: "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/collapse.min.js",
-        unique: "1"
-    });
-</script>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
 <script src="js/myapp.js"></script>
 </body>
 </html>
