@@ -15,6 +15,6 @@ function send(json) {
             var tmp='<tr class="active"><th scope="row">'+number+'</th><td>'+path.split("#")[1]+'</td> <td>'+path.split("#")[0]+'</td> </tr>';
             $('.table').append(tmp);
         });
-
+        $('#myModal').modal('hide');
     });
 }
