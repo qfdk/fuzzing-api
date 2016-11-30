@@ -1,19 +1,20 @@
 package esir3.vv;
 
 
+import io.swagger.models.Swagger;
+import io.swagger.parser.SwaggerParser;
+import org.json.JSONObject;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import io.swagger.models.Swagger;
-import io.swagger.parser.SwaggerParser;
-import org.json.JSONObject;
 
 /**
  * Created by qfdk on 19/10/2016.
@@ -52,7 +53,10 @@ public class Api {
     @Produces(MediaType.APPLICATION_JSON)
     public Response analyse() throws Exception {
 
+//        List<String> maLlist= new ArrayList<>();
+//        maLlist.add("http://google.fr");
         List<String> paths = data.getPaths();
+
         List<String> pathsValided = new ArrayList<>();
 
         String hostname = data.getHostname();

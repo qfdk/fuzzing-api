@@ -46,14 +46,19 @@
             <h1>Fuzzing or Amazing</h1>
         </div>
     </div>
-    <form class="form-inline" style="text-align: center;">
-        <div class="form-group">
-            <label for="url">URL : </label>
-                <input type="text" class="form-control" id="url" placeholder="http://">
+
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="input-group">
+                <input id="url" type="text" class="form-control" placeholder="http://localhost:8080/swagger.json">
+                <span class="input-group-btn">
+					<button id="go" class="btn btn-primary" type="button">Go!</button>
+            </span>
+            </div>
         </div>
-        <button id="go" type="submit" class="btn btn-primary">Allez test!</button>
-    </form>
-    <br/>
+    </div>
+
+    <br>
     <div class="jumbotron" style="background-color: #fff9f0;">
         <table class="table">
             <thead>
@@ -123,7 +128,8 @@
     </p>
 </div>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/basket.js/0.5.2/basket.full.min.js"></script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/basket.js/0.5.2/basket.full.min.js"></script>
 <script type="text/javascript">
     basket.require({
         url: "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/collapse.min.js",
