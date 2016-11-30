@@ -16,6 +16,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by qfdk on 19/10/2016.
@@ -24,6 +25,7 @@ import java.util.Map;
 public class Api {
 
     private FuzzingData data;
+    private String base_url=Tools.readConf("conf/conf.xml").getProperty("base_url");
 
     public Api() {
         data = FuzzingData.getInstance();
@@ -77,6 +79,19 @@ public class Api {
         return Response.status(200).entity(jsonObject.toString()).build();
     }
 
+    @GET
+    @Path("saveConf")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response saveConf(@QueryParam("path") String path) throws Exception {
+        Map<String,String> map= new TreeMap<>();
+        map.put("base_url","http://localhost:8080");
+        Tools.saveConf(map,"conf/conf.xml");
+
+        JSONObject ret = new JSONObject();
+        ret.put("msg", Tools.readConf("conf/conf.xml").getProperty("base_url"));
+        return Response.status(200).entity(ret.toString()).build();
+    }
+
     /**
      * http://localhost:8080/api/v1/getPath
      *
@@ -126,6 +141,6 @@ public class Api {
             return Response.status(200).entity(ret.toString()).build();
         }
         System.out.print(dataPaths);
-        return Response.temporaryRedirect(new URI("http://localhost:8080/api/v1/analyse")).build();
+        return Response.temporaryRedirect(new URI(this.base_url+"/api/v1/analyse")).build();
     }
 }

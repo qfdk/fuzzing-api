@@ -8,7 +8,7 @@ $('#go').click(function () {
 
 function send(json) {
     $('.table tbody tr').remove();
-    $.get('http://localhost:8080/api/v1/getPath?url=' + json, function (data, b, c) {
+    $.get('http://'+window.location['hostname']+':8080/api/v1/getPath?url=' + json, function (data, b, c) {
         var paths =data.paths;
         paths.forEach(function (path,i) {
             var number = i+1;

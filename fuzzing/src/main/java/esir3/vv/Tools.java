@@ -1,9 +1,10 @@
 package esir3.vv;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Random;
 
 import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
@@ -54,9 +55,59 @@ class Tools {
         return buf.toString();
     }
     /*
-     * strategy 
+     * strategy
      */
 	public static String generateTestData(){
         return randomString(10);
 	}
+
+
+
+    public static void saveConf(Map<String, String> map, String file_name) {
+        Properties prop = new Properties();
+        for (String s : map.keySet()) {
+            prop.setProperty(s, map.get(s));
+        }
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(file_name);
+        } catch (FileNotFoundException e) {
+            System.out.println(e);
+        }
+        try {
+            prop.storeToXML(fos, file_name);
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        try {
+            fos.close();
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+
+    /**
+     * get conf from conf xml
+     */
+
+    public static Properties readConf(String file_name) {
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(file_name);
+        } catch (FileNotFoundException e) {
+            System.out.println(e);
+        }
+        Properties prop = new Properties();
+        try {
+            prop.loadFromXML(fis);
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        try {
+            fis.close();
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        return prop;
+    }
 }
