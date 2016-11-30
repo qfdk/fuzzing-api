@@ -4,54 +4,52 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FuzzingData {
-	
-	private String hostname;
-	private String contentType;
-	private List<DataPath> paths;
 
-	private static FuzzingData instance=null;
+    private String hostname;
+    private String contentType;
+    private List<DataPath> paths;
 
-	static FuzzingData getInstance() {
-		if (instance == null) {
-			instance = new FuzzingData();
-		}
-		return instance;
-	}
+    private static FuzzingData instance = null;
 
-	private FuzzingData() {
-	}
-	
-	private FuzzingData(String hostname, String contentType, List<DataPath> paths) {
-		this.hostname = hostname;
-		this.contentType = contentType;
-		this.paths = paths;
-	}
+    static FuzzingData getInstance() {
+        if (instance == null) {
+            instance = new FuzzingData();
+        }
+        return instance;
+    }
 
-	public String getHostname() {
-		return hostname;
-	}
-	public void setHostname(String hostname) {
-		this.hostname = hostname;
-	}
-	public String getContentType() {
-		return contentType;
-	}
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
-	public List<DataPath> getPaths() {
-		return paths;
-	}
-	public void setPaths(List<DataPath> paths) {
-		this.paths = paths;
-	}
+    private FuzzingData() {
+    }
 
-	public List<String> getLink() {
-		List<String> result = new ArrayList<>();
-		
-		for (DataPath path : paths) {
-			result.add(path.getLink());
-		}
-		return result;
-	} 
+    public String getHostname() {
+        return hostname;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public List<DataPath> getPaths() {
+        return paths;
+    }
+
+    public void setPaths(List<DataPath> paths) {
+        this.paths = paths;
+    }
+
+    public List<String> getLink() {
+        List<String> result = new ArrayList<>();
+        for (DataPath path : paths) {
+            result.add(path.getLink());
+        }
+        return result;
+    }
 }

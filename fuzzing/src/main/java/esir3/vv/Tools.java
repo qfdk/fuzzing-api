@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Random;
 
 import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
 
@@ -11,6 +12,8 @@ import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
  * Created by qfdk on 2016/11/16.
  */
 class Tools {
+
+    public enum type {Integer,String};
 
     // HTTP GET request
     static String sendGet(String url) throws Exception {
@@ -39,23 +42,21 @@ class Tools {
         //print result
         return responseCode+"#"+response.toString();
     }
-    
-	 /*** Pas beau !!
-	 * @param type
-	 * @return
-	 */
-	public static  String generateTestData(String type){
-		switch (type) {
-		case "integer":
-		case "Integer":
-		case "int":
-			return "10";
-		case "STRING":
-		case "string":
-		case "str":
-			return "generatedByYousLI";
-		default :
-			return "generatedByYousLI";
-		}
+
+    public static String randomString(int length) {
+        String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        Random random = new Random();
+        StringBuffer buf = new StringBuffer();
+        for (int i = 0; i < length; i++) {
+            int num = random.nextInt(62);
+            buf.append(str.charAt(num));
+        }
+        return buf.toString();
+    }
+    /*
+     * strategy 
+     */
+	public static String generateTestData(){
+        return randomString(10);
 	}
 }

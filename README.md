@@ -23,8 +23,12 @@ default `swagger.json` : http://localhost:8080/swagger.json
 - todo
 
 ## todo list
-
-- [X] web ui
-- [ ] call back
-- [ ] backend singleton
+- [ ] POST
+- [ ] GET
+- [ ] DELETE
+- [ ] MOVE ?
+- [ ] TEST
+- [X] WEB UI
+- [X] backend singleton
+- [ ] .travis.yml ?
 

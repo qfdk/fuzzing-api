@@ -23,130 +23,109 @@ import java.util.Map;
 @Path("v1")
 public class Api {
 
-	private FuzzingData data;
+    private FuzzingData data;
 
-	public Api() {
-		data = FuzzingData.getInstance();
-		System.out.println("[+] Fuzzing api init...");
-	}
+    public Api() {
+        data = FuzzingData.getInstance();
+        System.out.println("[+] Fuzzing api init...");
+    }
 
-	/**
-	 * http://localhost:8080/api/v1/getStatus
-	 *
-	 * @return
-	 * @throws Exception
-	 */
-	@GET
-	@Path("getStatus")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getStatus() throws Exception {
-		return Response.status(200).entity("{status:ok,msg:api works!}").build();
-	}
+    /**
+     * http://localhost:8080/api/v1/getStatus
+     *
+     * @return
+     * @throws Exception
+     */
+    @GET
+    @Path("getStatus")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getStatus() throws Exception {
+        return Response.status(200).entity("{status:ok,msg:api works!}").build();
+    }
 
-	/**
-	 * http://localhost:8080/api/v1/getUrl
-	 *
-	 * @return
-	 * @throws Exception
-	 */
-	@GET
-	@Path("analyse")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response analyse() throws Exception {
+    /**
+     * http://localhost:8080/api/v1/analyse
+     *
+     * @return
+     * @throws Exception
+     */
+    @GET
+    @Path("analyse")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response analyse() throws Exception {
 
-		//        List<String> maLlist= new ArrayList<>();
-		//        maLlist.add("http://google.fr");
-		List<String> paths = data.getLink();
+        List<String> paths = data.getLink();
+        List<String> pathsValid = new ArrayList<>();
+        String hostname = data.getHostname();
+        String contentType = data.getContentType();
 
-		List<String> pathsValided = new ArrayList<>();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("hostname", hostname);
+        jsonObject.put("contentType", contentType);
 
-		String hostname = data.getHostname();
-		String contentType = data.getContentType();
+        for (String path : paths) {
+            String tmp = null;
+            try {
+                tmp = Tools.sendGet(path);
+                pathsValid.add(tmp.split("#")[0] + "#" + path);
+            } catch (Exception e) {
+                pathsValid.add("FFF#" + path);
+            }
+        }
+        jsonObject.put("paths", pathsValid);
+        System.out.println(jsonObject);
+        return Response.status(200).entity(jsonObject.toString()).build();
+    }
 
-		JSONObject jsonObject = new JSONObject();
+    /**
+     * http://localhost:8080/api/v1/getPath
+     *
+     * @throws Exception
+     */
+    @GET
+    @Path("getPath")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPath(@QueryParam("url") String url) throws Exception {
+        URI uri = new URI(url);
+        Swagger swagger = new SwaggerParser().read(url);
+        List<DataPath> dataPaths = new ArrayList<>();
 
-		jsonObject.put("hostname", hostname);
-		jsonObject.put("contentType", contentType);
+        if (swagger != null) {
+            Map<String, io.swagger.models.Path> paths = swagger.getPaths();
 
-		for (String path : paths) {
-			String tmp = null;
-			try {
-				tmp = Tools.sendGet(path);
-				pathsValided.add(tmp.split("#")[0] + "#" + path);
-			} catch (Exception e) {
-				pathsValided.add("FFF#" + path);
-			}
-		}
-		jsonObject.put("paths", pathsValided);
-		System.out.println(jsonObject);
-		return Response.status(200).entity(jsonObject.toString()).build();
-	}
+            for (String currentPathName : paths.keySet()) {
+                io.swagger.models.Path currentPath = paths.get(currentPathName);
 
-	/**
-	 * http://localhost:8080/api/v1/getPath
-	 *
-	 * @return
-	 * @throws Exception
-	 */
-	@GET
-	@Path("getPath")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getPath(@QueryParam("url") String url) throws Exception {
+                if (currentPath.getGet() != null) {
+                    DataPath dataCurrentPath = new DataPath();
 
-		JSONObject ret = new JSONObject();
-		URI uri = new URI(url);
-		Swagger swagger = new SwaggerParser().read(url);
-		List<DataPath> dataPaths = new ArrayList<>();
+                    //	Get all responses codes
+                    dataCurrentPath.setCode(paths.get(currentPathName).getGet().getResponses().keySet());
 
-		if (swagger != null) 
-		{
-			Map<String, io.swagger.models.Path> paths = swagger.getPaths();
+                    // Get all link with data
+                    String linkBase = swagger.getSchemes().get(0).toString().toLowerCase() + "://" + swagger.getHost() + swagger.getBasePath() + currentPathName;
 
-			for (String currentPathName : paths.keySet()) 
-			{
-				io.swagger.models.Path currentPath = paths.get(currentPathName);
+                    if (!currentPath.getGet().getParameters().isEmpty()) {
+                        for (Parameter parameter : currentPath.getGet().getParameters()) {
+                            // todo
+                            linkBase = linkBase.replace("{" + parameter.getName() + "}", Tools.generateTestData());
+                            dataCurrentPath.setLink(linkBase);
+                        }
+                    } else {
+                        dataCurrentPath.setLink(linkBase);
+                    }
 
-				if(currentPath.getGet() !=null)
-				{
-					DataPath dataCurrentPath = new DataPath();
-
-					//	Get all responses codes
-					dataCurrentPath.setCode(paths.get(currentPathName).getGet().getResponses().keySet());
-
-					// Get all link with data
-					String linkBase = swagger.getSchemes().get(0).toString().toLowerCase()+"://"+swagger.getHost()+swagger.getBasePath()+currentPathName;	
-
-					if(!currentPath.getGet().getParameters().isEmpty())
-					{
-						for (Parameter parameter : currentPath.getGet().getParameters()) 
-						{
-							linkBase = linkBase.replace("{"+parameter.getName()+"}", Tools.generateTestData("String"));
-							dataCurrentPath.setLink(linkBase);
-						}
-					}
-					else
-					{
-						dataCurrentPath.setLink(linkBase);
-					}
-
-					dataPaths.add(dataCurrentPath);
-				}
-			}
-
-			ret.put("hostname", swagger.getHost());
-			ret.put("swaggerSource", url);
-			ret.put("paths", dataPaths);
-		}else
-		{
-			ret.put("EROOR", "SWAGGER FILE IS INVALID");
-		}
-
-		data.setHostname(uri.getHost());
-		data.setPaths(dataPaths);
-
-		System.out.print(dataPaths);
-
-		//		return  Response.status(200).entity(ret.toString()).build();
-		return Response.temporaryRedirect(new URI("http://localhost:8080/api/v1/analyse")).build();
-	}
+                    dataPaths.add(dataCurrentPath);
+                }
+            }
+            data.setHostname(swagger.getHost());
+            data.setPaths(dataPaths);
+        } else {
+            JSONObject ret = new JSONObject();
+            ret.put("msg", "SWAGGER FILE IS INVALID");
+            return Response.status(200).entity(ret.toString()).build();
+        }
+        System.out.print(dataPaths);
+        return Response.temporaryRedirect(new URI("http://localhost:8080/api/v1/analyse")).build();
+    }
 }
