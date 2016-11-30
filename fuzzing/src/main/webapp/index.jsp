@@ -50,7 +50,7 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="input-group">
-                <input id="url" type="text" class="form-control" placeholder="http://localhost:8080/swagger.json">
+                <input id="url" type="text" class="form-control" value="http://petstore.swagger.io/v2/swagger.json" placeholder="http://localhost:8080/swagger.json">
                 <span class="input-group-btn">
 					<button id="go" class="btn btn-primary" type="button">Go!</button>
             </span>
@@ -69,51 +69,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr class="active">
-                <th scope="row">1</th>
-                <td>Column content</td>
-                <td>F</td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>Column content</td>
-                <td>F</td>
-            </tr>
-            <tr class="success">
-                <th scope="row">3</th>
-                <td>Column content</td>
-                <td>T</td>
-            </tr>
-            <tr>
-                <th scope="row">4</th>
-                <td>Column content</td>
-                <td>T</td>
-            </tr>
-            <tr class="info">
-                <th scope="row">5</th>
-                <td>Column content</td>
-                <td>T</td>
-            </tr>
-            <tr>
-                <th scope="row">6</th>
-                <td>Column content</td>
-                <td>F</td>
-            </tr>
-            <tr class="warning">
-                <th scope="row">7</th>
-                <td>Column content</td>
-                <td>Loading ...</td>
-            </tr>
-            <tr>
-                <th scope="row">8</th>
-                <td>Column content</td>
-                <td>Loading ...</td>
-            </tr>
-            <tr class="danger">
-                <th scope="row">9</th>
-                <td>Column content</td>
-                <td>Loading ...</td>
-            </tr>
+
             </tbody>
         </table>
     </div>

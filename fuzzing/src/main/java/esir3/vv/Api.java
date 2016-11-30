@@ -100,7 +100,7 @@ public class Api {
             Map<String, io.swagger.models.Path> paths = swagger.getPaths();
 
             for (String path : paths.keySet()) {
-                pathList.add(uri.getScheme() + "://" + uri.getHost() + path);
+                pathList.add(uri.getScheme() + "://" + uri.getHost() +swagger.getBasePath()+ path);
             }
         }
         ret.put("hostname", uri.getHost());
