@@ -2,6 +2,7 @@ package esir3.vv;
 
 
 import io.swagger.models.Swagger;
+import io.swagger.models.parameters.Parameter;
 import io.swagger.parser.SwaggerParser;
 import org.json.JSONObject;
 
@@ -82,35 +83,72 @@ public class Api {
     }
 
     /**
-     * http://localhost:8080/api/v1/getPath
-     *
-     * @return
-     * @throws Exception
-     */
-    @GET
-    @Path("getPath")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getPath(@QueryParam("url") String url) throws Exception {
+	 * http://localhost:8080/api/v1/getPath
+	 *
+	 * @return
+	 * @throws Exception
+	 */
+	@GET
+	@Path("getPath")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getPath(@QueryParam("url") String url) throws Exception {
 
-        JSONObject ret = new JSONObject();
-        URI uri = new URI(url);
-        Swagger swagger = new SwaggerParser().read(url);
-        List<String> pathList = new ArrayList<>();
-        if (swagger != null) {
-            Map<String, io.swagger.models.Path> paths = swagger.getPaths();
+		JSONObject ret = new JSONObject();
+		URI uri = new URI(url);
+		Swagger swagger = new SwaggerParser().read(url);
+		List<String> pathList = new ArrayList<>();
+		List<DataPath> dataPaths = new ArrayList<>();
 
-            for (String path : paths.keySet()) {
-                pathList.add(uri.getScheme() + "://" + uri.getHost() +swagger.getBasePath()+ path);
-            }
-        }
-        ret.put("hostname", uri.getHost());
-        ret.put("paths", pathList);
-        ret.put("swaggerSource", url);
-        data.setHostname(uri.getHost());
-        data.setPaths(pathList);
-//        System.out.print(pathList);
-//        return  Response.status(200).entity(ret.toString()).build();
-        return Response.temporaryRedirect(new URI("http://localhost:8080/api/v1/analyse")).build();
-    }
+		if (swagger != null) 
+		{
+			Map<String, io.swagger.models.Path> paths = swagger.getPaths();
 
+			for (String currentPathName : paths.keySet()) 
+			{
+				io.swagger.models.Path currentPath = paths.get(currentPathName);
+
+				if(currentPath.getGet() !=null)
+				{
+					DataPath dataCurrentPath = new DataPath();
+
+					//	Get all responses codes
+					dataCurrentPath.setCode(paths.get(currentPathName).getGet().getResponses().keySet());
+
+					// Get all link with data
+					String linkBase = swagger.getSchemes().get(0).toString().toLowerCase()+"://"+swagger.getHost()+swagger.getBasePath()+currentPathName;	
+
+					List<String> listParam = new ArrayList<>();
+
+					if(!currentPath.getGet().getParameters().isEmpty())
+					{
+						for (Parameter parameter : currentPath.getGet().getParameters()) 
+						{
+							linkBase = linkBase.replace("{"+parameter.getName()+"}", Tools.generateTestData("String"));
+							dataCurrentPath.setLink(linkBase);
+						}
+					}
+					else
+					{
+						dataCurrentPath.setLink(linkBase);
+					}
+
+					dataPaths.add(dataCurrentPath);
+				}
+			}
+
+			ret.put("hostname", swagger.getHost());
+			ret.put("swaggerSource", url);
+			ret.put("paths", dataPaths);
+		}else
+		{
+			ret.put("EROOR", "SWAGGER FILE IS INVALID");
+		}
+
+		data.setHostname(uri.getHost());
+		data.setPaths(pathList);
+		System.out.print(pathList);
+
+		return  Response.status(200).entity(ret.toString()).build();
+		//		return Response.temporaryRedirect(new URI("http://localhost:8080/api/v1/analyse")).build();
+	}
 }

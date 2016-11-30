@@ -53,9 +53,9 @@ class Tools {
 		case "STRING":
 		case "string":
 		case "str":
-			return "dataGeneratedByYoussouf";
+			return "generatedByYousLI";
 		default :
-			return "dataGeneratedByYoussouf";
+			return "generatedByYousLI";
 		}
 	}
 }
