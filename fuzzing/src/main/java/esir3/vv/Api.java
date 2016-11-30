@@ -56,7 +56,6 @@ public class Api {
 
 		//        List<String> maLlist= new ArrayList<>();
 		//        maLlist.add("http://google.fr");
-		List<DataPath> dataPaths = data.getPaths();
 		List<String> paths = data.getLink();
 
 		List<String> pathsValided = new ArrayList<>();
@@ -116,8 +115,6 @@ public class Api {
 
 					// Get all link with data
 					String linkBase = swagger.getSchemes().get(0).toString().toLowerCase()+"://"+swagger.getHost()+swagger.getBasePath()+currentPathName;	
-
-					List<String> listParam = new ArrayList<>();
 
 					if(!currentPath.getGet().getParameters().isEmpty())
 					{
