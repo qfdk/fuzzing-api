@@ -23,66 +23,67 @@ import java.util.Map;
 @Path("v1")
 public class Api {
 
-    private FuzzingData data;
+	private FuzzingData data;
 
-    public Api() {
-        data = FuzzingData.getInstance();
-        System.out.println("[+] Fuzzing api init...");
-    }
+	public Api() {
+		data = FuzzingData.getInstance();
+		System.out.println("[+] Fuzzing api init...");
+	}
 
-    /**
-     * http://localhost:8080/api/v1/getStatus
-     *
-     * @return
-     * @throws Exception
-     */
-    @GET
-    @Path("getStatus")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getStatus() throws Exception {
-        return Response.status(200).entity("{status:ok,msg:api works!}").build();
-    }
+	/**
+	 * http://localhost:8080/api/v1/getStatus
+	 *
+	 * @return
+	 * @throws Exception
+	 */
+	@GET
+	@Path("getStatus")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getStatus() throws Exception {
+		return Response.status(200).entity("{status:ok,msg:api works!}").build();
+	}
 
-    /**
-     * http://localhost:8080/api/v1/getUrl
-     *
-     * @return
-     * @throws Exception
-     */
-    @GET
-    @Path("analyse")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response analyse() throws Exception {
+	/**
+	 * http://localhost:8080/api/v1/getUrl
+	 *
+	 * @return
+	 * @throws Exception
+	 */
+	@GET
+	@Path("analyse")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response analyse() throws Exception {
 
-//        List<String> maLlist= new ArrayList<>();
-//        maLlist.add("http://google.fr");
-        List<String> paths = data.getPaths();
+		//        List<String> maLlist= new ArrayList<>();
+		//        maLlist.add("http://google.fr");
+		List<DataPath> dataPaths = data.getPaths();
+		List<String> paths = data.getLink();
 
-        List<String> pathsValided = new ArrayList<>();
+		List<String> pathsValided = new ArrayList<>();
 
-        String hostname = data.getHostname();
-        String contentType = data.getContentType();
+		String hostname = data.getHostname();
+		String contentType = data.getContentType();
 
-        JSONObject jsonObject = new JSONObject();
+		JSONObject jsonObject = new JSONObject();
 
-        jsonObject.put("hostname", hostname);
-        jsonObject.put("contentType", contentType);
+		jsonObject.put("hostname", hostname);
+		jsonObject.put("contentType", contentType);
 
-        for (String path : paths) {
-            String tmp = null;
-            try {
-                tmp = Tools.sendGet(path);
-                pathsValided.add(tmp.split("#")[0] + "#" + path);
-            } catch (Exception e) {
-                pathsValided.add("FFF#" + path);
-            }
-        }
-        jsonObject.put("paths", pathsValided);
-        System.out.println(jsonObject);
-        return Response.status(200).entity(jsonObject.toString()).build();
-    }
+		for (String path : paths) {
+			String tmp = null;
+			try {
+				tmp = Tools.sendGet(path);
+				pathsValided.add(tmp.split("#")[0] + "#" + path);
+			} catch (Exception e) {
+				pathsValided.add("FFF#" + path);
+			}
+		}
+		jsonObject.put("paths", pathsValided);
+		System.out.println(jsonObject);
+		return Response.status(200).entity(jsonObject.toString()).build();
+	}
 
-    /**
+	/**
 	 * http://localhost:8080/api/v1/getPath
 	 *
 	 * @return
@@ -96,7 +97,6 @@ public class Api {
 		JSONObject ret = new JSONObject();
 		URI uri = new URI(url);
 		Swagger swagger = new SwaggerParser().read(url);
-		List<String> pathList = new ArrayList<>();
 		List<DataPath> dataPaths = new ArrayList<>();
 
 		if (swagger != null) 
@@ -145,10 +145,11 @@ public class Api {
 		}
 
 		data.setHostname(uri.getHost());
-		data.setPaths(pathList);
-		System.out.print(pathList);
+		data.setPaths(dataPaths);
 
-		return  Response.status(200).entity(ret.toString()).build();
-		//		return Response.temporaryRedirect(new URI("http://localhost:8080/api/v1/analyse")).build();
+		System.out.print(dataPaths);
+
+		//		return  Response.status(200).entity(ret.toString()).build();
+		return Response.temporaryRedirect(new URI("http://localhost:8080/api/v1/analyse")).build();
 	}
 }

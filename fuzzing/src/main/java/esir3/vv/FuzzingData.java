@@ -1,12 +1,13 @@
 package esir3.vv;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FuzzingData {
 	
 	private String hostname;
 	private String contentType;
-	private List<String> paths;
+	private List<DataPath> paths;
 
 	private static FuzzingData instance=null;
 
@@ -20,7 +21,7 @@ public class FuzzingData {
 	private FuzzingData() {
 	}
 	
-	private FuzzingData(String hostname, String contentType, List<String> paths) {
+	private FuzzingData(String hostname, String contentType, List<DataPath> paths) {
 		this.hostname = hostname;
 		this.contentType = contentType;
 		this.paths = paths;
@@ -38,11 +39,19 @@ public class FuzzingData {
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
 	}
-	public List<String> getPaths() {
+	public List<DataPath> getPaths() {
 		return paths;
 	}
-	public void setPaths(List<String> paths) {
+	public void setPaths(List<DataPath> paths) {
 		this.paths = paths;
+	}
+
+	public List<String> getLink() {
+		List<String> result = new ArrayList<>();
+		
+		for (DataPath path : paths) {
+			result.add(path.getLink());
+		}
+		return result;
 	} 
-	
 }
