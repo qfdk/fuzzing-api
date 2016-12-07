@@ -9,12 +9,22 @@ $('#go').click(function () {
 function send(json) {
     $('.table tbody tr').remove();
     $.get('http://'+window.location['hostname']+':8080/api/v1/getPath?url=' + json, function (data, b, c) {
-        var paths =data.paths;
+        var paths =data.urls;
+        var tmp='';
         paths.forEach(function (path,i) {
             var number = i+1;
-            var tmp='<tr class="active"><th scope="row">'+number+'</th><td>'+path.split("#")[1]+'</td> <td>'+path.split("#")[0]+'</td> </tr>';
+
+            if (path.valided)
+            {
+                tmp='<tr class="success"><th scope="row">'+number+'</th><td>'+path.link+'</td> <td>'+path.reponseCode+'</td><td>'+path.codes+'</td></tr>';
+            }else
+            {
+                tmp='<tr class="danger"><th scope="row">'+number+'</th><td>'+path.link+'</td> <td>'+path.reponseCode+'</td><td>'+path.codes+'</td></tr>';
+            }
             $('.table').append(tmp);
+            tmp = "";
         });
         $('#myModal').modal('hide');
+
     });
 }

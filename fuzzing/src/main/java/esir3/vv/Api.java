@@ -13,10 +13,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Created by qfdk on 19/10/2016.
@@ -25,7 +22,7 @@ import java.util.TreeMap;
 public class Api {
 
     private FuzzingData data;
-    private String base_url=Tools.readConf("conf/conf.xml").getProperty("base_url");
+    private String base_url = Tools.readConf("conf/conf.xml").getProperty("base_url");
 
     public Api() {
         data = FuzzingData.getInstance();
@@ -56,8 +53,8 @@ public class Api {
     @Produces(MediaType.APPLICATION_JSON)
     public Response analyse() throws Exception {
 
-        List<String> paths = data.getLink();
-        List<String> pathsValid = new ArrayList<>();
+        List<UrlInfo> urls = data.getUrlInfos();
+
         String hostname = data.getHostname();
         String contentType = data.getContentType();
 
@@ -65,16 +62,12 @@ public class Api {
         jsonObject.put("hostname", hostname);
         jsonObject.put("contentType", contentType);
 
-        for (String path : paths) {
-            String tmp = null;
-            try {
-                tmp = Tools.sendGet(path);
-                pathsValid.add(tmp.split("#")[0] + "#" + path);
-            } catch (Exception e) {
-                pathsValid.add("FFF#" + path);
-            }
+        for (UrlInfo url : urls) {
+            url.setReponseCode(Tools.sendGet(url.getLink()));
         }
-        jsonObject.put("paths", pathsValid);
+
+        jsonObject.put("urls", urls);
+
         System.out.println(jsonObject);
         return Response.status(200).entity(jsonObject.toString()).build();
     }
@@ -83,9 +76,9 @@ public class Api {
     @Path("saveConf")
     @Produces(MediaType.APPLICATION_JSON)
     public Response saveConf(@QueryParam("path") String path) throws Exception {
-        Map<String,String> map= new TreeMap<>();
-        map.put("base_url","http://localhost:8080");
-        Tools.saveConf(map,"conf/conf.xml");
+        Map<String, String> map = new TreeMap<>();
+        map.put("base_url", "http://localhost:8080");
+        Tools.saveConf(map, "conf/conf.xml");
 
         JSONObject ret = new JSONObject();
         ret.put("msg", Tools.readConf("conf/conf.xml").getProperty("base_url"));
@@ -103,7 +96,7 @@ public class Api {
     public Response getPath(@QueryParam("url") String url) throws Exception {
         URI uri = new URI(url);
         Swagger swagger = new SwaggerParser().read(url);
-        List<DataPath> dataPaths = new ArrayList<>();
+        List<UrlInfo> urlInfos = new ArrayList<>();
 
         if (swagger != null) {
             Map<String, io.swagger.models.Path> paths = swagger.getPaths();
@@ -112,10 +105,10 @@ public class Api {
                 io.swagger.models.Path currentPath = paths.get(currentPathName);
 
                 if (currentPath.getGet() != null) {
-                    DataPath dataCurrentPath = new DataPath();
+                    UrlInfo dataCurrentPath = new UrlInfo();
 
                     //	Get all responses codes
-                    dataCurrentPath.setCode(paths.get(currentPathName).getGet().getResponses().keySet());
+                    dataCurrentPath.setCodes(paths.get(currentPathName).getGet().getResponses().keySet());
 
                     // Get all link with data
                     String linkBase = swagger.getSchemes().get(0).toString().toLowerCase() + "://" + swagger.getHost() + swagger.getBasePath() + currentPathName;
@@ -130,17 +123,17 @@ public class Api {
                         dataCurrentPath.setLink(linkBase);
                     }
 
-                    dataPaths.add(dataCurrentPath);
+                    urlInfos.add(dataCurrentPath);
                 }
             }
             data.setHostname(swagger.getHost());
-            data.setPaths(dataPaths);
+            data.setUrls(urlInfos);
         } else {
             JSONObject ret = new JSONObject();
             ret.put("msg", "SWAGGER FILE IS INVALID");
             return Response.status(200).entity(ret.toString()).build();
         }
-        System.out.print(dataPaths);
-        return Response.temporaryRedirect(new URI(this.base_url+"/api/v1/analyse")).build();
+        System.out.print(urlInfos);
+        return Response.temporaryRedirect(new URI(this.base_url + "/api/v1/analyse")).build();
     }
 }

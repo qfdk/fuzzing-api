@@ -7,7 +7,7 @@ public class FuzzingData {
 
     private String hostname;
     private String contentType;
-    private List<DataPath> paths;
+    private List<UrlInfo> urls;
 
     private static FuzzingData instance = null;
 
@@ -37,19 +37,20 @@ public class FuzzingData {
         this.contentType = contentType;
     }
 
-    public List<DataPath> getPaths() {
-        return paths;
+    public List<UrlInfo> getUrlInfos() {
+        return urls;
     }
 
-    public void setPaths(List<DataPath> paths) {
-        this.paths = paths;
+    public void setUrls(List<UrlInfo> urls) {
+        this.urls = urls;
     }
 
-    public List<String> getLink() {
+    public List<String> getUrls() {
         List<String> result = new ArrayList<>();
-        for (DataPath path : paths) {
+        for (UrlInfo path : urls) {
             result.add(path.getLink());
         }
         return result;
     }
+
 }

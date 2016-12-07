@@ -65,7 +65,8 @@
             <tr>
                 <th>#No.</th>
                 <th>Tageet url</th>
-                <th>Result ?</th>
+                <th>Reponse code</th>
+                <th>Result list</th>
             </tr>
             </thead>
             <tbody>
