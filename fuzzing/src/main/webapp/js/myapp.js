@@ -16,10 +16,10 @@ function send(json) {
 
             if (path.valided)
             {
-                tmp='<tr class="success"><th scope="row">'+number+'</th><td>'+path.link+'</td> <td>'+path.reponseCode+'</td><td>'+path.codes+'</td></tr>';
+                tmp='<tr class="success"><th scope="row">'+number+'</th><td>'+path.link+'</td> <td>'+path.reponseCode+'</td><td>'+path.codes+'</td><td>'+path.operationType+'</td></tr>';
             }else
             {
-                tmp='<tr class="danger"><th scope="row">'+number+'</th><td>'+path.link+'</td> <td>'+path.reponseCode+'</td><td>'+path.codes+'</td></tr>';
+                tmp='<tr class="danger"><th scope="row">'+number+'</th><td>'+path.link+'</td> <td>'+path.reponseCode+'</td><td>'+path.codes+'</td><td>'+path.operationType+'</td></tr>';
             }
             $('.table').append(tmp);
             tmp = "";

@@ -14,10 +14,13 @@ public class UrlInfo {
 	private Set<String> codes;
 	private boolean valided;
 	private String reponseCode;
-
+	private String operationType;
+	private String postParameters;
+	
+	
 	public UrlInfo() {
 		this.codes = new HashSet<>();
-		this.valided=false;
+		this.setValided(false);
 		this.reponseCode="FFF";
 	}
 
@@ -37,17 +40,14 @@ public class UrlInfo {
 		this.codes = code;
 	}
 
-	private void setValided(boolean valided)
-	{
-		this.valided=valided;
-	}
+
 
 	public void setReponseCode(String reponseCodecode)
 	{
         this.reponseCode=reponseCodecode;
 		if (codes.contains(reponseCodecode))
 		{
-			this.valided=true;
+			this.setValided(true);
 		}
 	}
 
@@ -56,9 +56,36 @@ public class UrlInfo {
         return this.reponseCode;
     }
 
-	public boolean getValided()
-    {
-        return this.valided;
-    }
+	public boolean isValided() {
+		return valided;
+	}
+
+	public void setValided(boolean valided) {
+		this.valided = valided;
+	}
+
+
+
+	public String getPostParameters() {
+		return postParameters;
+	}
+
+	public void setPostParameters(String postParameters) {
+		this.postParameters = postParameters;
+	}
+
+	public String getOperationType() {
+		return operationType;
+	}
+
+	public void setOperationType(String operationType) {
+		this.operationType = operationType;
+	}
+	
+	@Override
+	public String toString() {
+		
+		return "("+operationType+")=>"+link;
+	}
 }
 

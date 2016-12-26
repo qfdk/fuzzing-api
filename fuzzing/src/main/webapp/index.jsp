@@ -64,9 +64,10 @@
             <thead>
             <tr>
                 <th>#No.</th>
-                <th>Tageet url</th>
+                <th>Target url</th>
                 <th>Reponse code</th>
                 <th>Result list</th>
+                <th>Operation Type</th>
             </tr>
             </thead>
             <tbody>
