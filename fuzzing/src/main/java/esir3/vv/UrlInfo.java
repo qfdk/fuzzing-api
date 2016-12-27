@@ -15,9 +15,9 @@ public class UrlInfo {
 	private boolean valided;
 	private String reponseCode;
 	private String operationType;
-	private String postParameters;
-	
-	
+	private String params;
+
+
 	public UrlInfo() {
 		this.codes = new HashSet<>();
 		this.setValided(false);
@@ -27,15 +27,15 @@ public class UrlInfo {
 	public String getLink() {
 		return link;
 	}
-	
+
 	public void setLink(String link) {
 		this.link = link;
 	}
-	
+
 	public Set<String> getCodes() {
 		return codes;
 	}
-	
+
 	public void setCodes(Set<String> code) {
 		this.codes = code;
 	}
@@ -44,7 +44,7 @@ public class UrlInfo {
 
 	public void setReponseCode(String reponseCodecode)
 	{
-        this.reponseCode=reponseCodecode;
+		this.reponseCode=reponseCodecode;
 		if (codes.contains(reponseCodecode))
 		{
 			this.setValided(true);
@@ -52,9 +52,9 @@ public class UrlInfo {
 	}
 
 	public String getReponseCode()
-    {
-        return this.reponseCode;
-    }
+	{
+		return this.reponseCode;
+	}
 
 	public boolean isValided() {
 		return valided;
@@ -67,13 +67,17 @@ public class UrlInfo {
 
 
 	public String getPostParameters() {
-		return postParameters;
+		return params;
 	}
 
 	public void setPostParameters(String postParameters) {
-		this.postParameters = postParameters;
+		this.params = postParameters;
 	}
-
+	
+	/**
+	 * 
+	 * @return OperationType : PUT, POST, GET, DELETE
+	 */
 	public String getOperationType() {
 		return operationType;
 	}
@@ -81,10 +85,10 @@ public class UrlInfo {
 	public void setOperationType(String operationType) {
 		this.operationType = operationType;
 	}
-	
+
 	@Override
 	public String toString() {
-		
+
 		return "("+operationType+")=>"+link;
 	}
 }

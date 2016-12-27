@@ -73,6 +73,7 @@ public class Api {
 		jsonObject.put("hostname", hostname);
 		jsonObject.put("contentType", contentType);
 
+		// add del chang post put ..
 		for (UrlInfo url : urls) {
 			if(url.getOperationType().equals(OperationType.GET.toString()))
 			{
