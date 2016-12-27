@@ -1,18 +1,14 @@
 package esir3.vv;
 
 
+import esir3.vv.Tools.OperationType;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.parser.SwaggerParser;
-
-import org.apache.http.impl.execchain.MainClientExec;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import esir3.vv.Tools.OperationType;
-
-import javax.tools.Tool;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -20,8 +16,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
-import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by qfdk on 19/10/2016.
@@ -81,7 +79,7 @@ public class Api {
 			}
 			if(url.getOperationType().equals(OperationType.POST.toString()))
 			{
-				url.setReponseCode(Tools.sendPost(url.getLink(), url.getPostParameters()));
+				url.setReponseCode(Tools.sendPost(url.getLink(), url.getParameters()));
 			}
 		}
 
@@ -99,7 +97,6 @@ public class Api {
 		Map<String, String> map = new TreeMap<>();
 		map.put("base_url", "http://localhost:8080");
 		Tools.saveConf(map, "conf/conf.xml");
-
 		JSONObject ret = new JSONObject();
 		ret.put("msg", Tools.readConf("conf/conf.xml").getProperty("base_url"));
 		return Response.status(200).entity(ret.toString()).build();
@@ -114,7 +111,6 @@ public class Api {
 	@Path("getPath")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getPath(@QueryParam("url") String url) throws Exception {
-		URI uri = new URI(url);
 		Swagger swagger = new SwaggerParser().read(url);
 		List<UrlInfo> urlInfos = new ArrayList<>();
 
@@ -155,23 +151,20 @@ public class Api {
 					dataCurrentPath.setOperationType(OperationType.POST.toString());
 					dataCurrentPath.setCodes(paths.get(currentPathName).getPost().getResponses().keySet());
 					String linkBase = swagger.getSchemes().get(0).toString().toLowerCase() + "://" + swagger.getHost() + swagger.getBasePath() + currentPathName;
-					List<Parameter> param = currentPath.getPost().getParameters();
-					StringBuilder postParameters = new StringBuilder();
-					for(int i=0;i<param.size();i++)
-					{
-						linkBase = linkBase.replace("{" + param.get(i).getName() + "}", Tools.generateTestData());
-						postParameters.append(param.get(i).getName())
-						.append("=")
-						.append(Tools.generateTestData());
 
-						if(i<param.size()-1)
-						{
-							postParameters.append("&");
-						}
-						logger.debug("POST :  "+postParameters+ " for path "+linkBase);
+					List<Parameter> listParams = currentPath.getPost().getParameters();
+
+					Map<String,String> params=new TreeMap<>();
+
+					for (int i=0;i<listParams.size();i++)
+					{
+						linkBase = linkBase.replace("{" + listParams.get(i).getName() + "}", Tools.generateTestData());
+						params.put(listParams.get(i).getName(),Tools.generateTestData());
+						logger.debug("POST :  "+params.toString()+ " for path "+linkBase);
 					}
+
 					dataCurrentPath.setLink(linkBase);
-					dataCurrentPath.setPostParameters(postParameters.toString());
+					dataCurrentPath.setParameters(params);
 					urlInfos.add(dataCurrentPath);
 				}
 			}
