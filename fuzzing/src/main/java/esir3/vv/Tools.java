@@ -131,7 +131,7 @@ public class Tools {
 			sb.append(s).append("=").append(map.get(s)).append("&");
 		}
 		String urlParameters = sb.toString().substring(0, sb.length() - 1);
-		System.out.println(urlParameters);
+		logger.debug(urlParameters);
 		// Send post request
 		con.setDoOutput(true);
 		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
@@ -156,8 +156,8 @@ public class Tools {
 		BufferedReader in = new BufferedReader(
 				new InputStreamReader(response.getEntity().getContent()));
 		int reponseCode = response.getStatusLine().getStatusCode();
-		System.out.println("\nSending 'Delete' request to URL : " + url);
-		System.out.println("Response Code : " + reponseCode);
+		logger.debug("\nSending 'Delete' request to URL : " + url);
+		logger.debug("Response Code : " + reponseCode);
 		return String.valueOf(reponseCode);
 	}
 
