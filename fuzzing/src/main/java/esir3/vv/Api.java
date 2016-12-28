@@ -85,7 +85,11 @@ public class Api {
 			{
 				url.setReponseCode(Tools.sendDel(url.getLink()));
 			}
-			
+			if(url.getOperationType().equals(OperationType.PUT.toString()))
+			{
+				url.setReponseCode(Tools.sendPut(url.getLink(),url.getParameters()));
+			}
+
 			if(url.getCodes().contains("default"))
 			{
 				url.setValided(true);
@@ -168,11 +172,8 @@ public class Api {
 					for (int i=0;i<listParams.size();i++)
 					{
 						linkBase = linkBase.replace("{" + listParams.get(i).getName() + "}", Tools.generateTestData());
-						if(listParams.get(i).getRequired())
-						{
-							params.put(listParams.get(i).getName(),Tools.generateTestData());
-							logger.debug("POST :  "+params.toString()+ " for path "+linkBase);
-						}
+						params.put(listParams.get(i).getName(),Tools.generateTestData());
+						logger.debug("POST :  "+params.toString()+ " for path "+linkBase);
 					}
 
 					dataCurrentPath.setLink(linkBase);
@@ -201,6 +202,29 @@ public class Api {
 						dataCurrentPath.setLink(linkBase);
 					}
 
+					urlInfos.add(dataCurrentPath);
+				}
+
+				if (currentPath.getPut() != null) {
+					UrlInfo dataCurrentPath = new UrlInfo();
+
+					dataCurrentPath.setOperationType(OperationType.PUT.toString());
+					dataCurrentPath.setCodes(paths.get(currentPathName).getPut().getResponses().keySet());
+					String linkBase = swagger.getSchemes().get(0).toString().toLowerCase() + "://" + swagger.getHost() + swagger.getBasePath() + currentPathName;
+
+					List<Parameter> listParams = currentPath.getPut().getParameters();
+
+					Map<String,String> params=new TreeMap<>();
+
+					for (int i=0;i<listParams.size();i++)
+					{
+						linkBase = linkBase.replace("{" + listParams.get(i).getName() + "}", Tools.generateTestData());
+						params.put(listParams.get(i).getName(),Tools.generateTestData());
+						logger.debug("PUT :  "+params.toString()+ " for path "+linkBase);
+					}
+
+					dataCurrentPath.setLink(linkBase);
+					dataCurrentPath.setParameters(params);
 					urlInfos.add(dataCurrentPath);
 				}
 

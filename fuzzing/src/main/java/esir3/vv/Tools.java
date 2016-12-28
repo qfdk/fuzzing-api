@@ -161,6 +161,36 @@ public class Tools {
 		return String.valueOf(reponseCode);
 	}
 
+	public static String sendPut(String url, Map<String, String> map) throws Exception {
+
+		URL obj = new URL(url);
+		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+		//add reuqest header
+		con.setRequestMethod("PUT");
+		con.setRequestProperty("User-Agent", USER_AGENT);
+		con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+		con.setRequestProperty("Content-Type", "application/json; charset=utf8");
+		StringBuilder sb = new StringBuilder();
+
+		for (String s : map.keySet()) {
+			sb.append(s).append("=").append(map.get(s)).append("&");
+		}
+		String urlParameters = sb.toString().substring(0, sb.length() - 1);
+		logger.debug(urlParameters);
+		// Send post request
+		con.setDoOutput(true);
+		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+		wr.writeBytes(urlParameters);
+		wr.flush();
+		wr.close();
+		int responseCode = con.getResponseCode();
+		logger.debug("Sending 'PUT' request to URL : " + url);
+		logger.debug("Response Code : " + responseCode);
+		return String.valueOf(responseCode);
+	}
+
+
 
 	/**
 	 * generate String

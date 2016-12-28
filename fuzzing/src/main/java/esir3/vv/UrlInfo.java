@@ -29,6 +29,9 @@ public class UrlInfo {
 		this.params = new TreeMap<>();
 	}
 
+	/**
+	 * @return Link generated for the url with paramater
+	 */
 	public String getLink() {
 		return link;
 	}
@@ -57,6 +60,9 @@ public class UrlInfo {
 		return this.reponseCode;
 	}
 
+	/**
+	 * @return True if our response is in spec reponse set
+	 */
 	public boolean isValided() {
 		return valided;
 	}
