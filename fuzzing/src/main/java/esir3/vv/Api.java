@@ -85,6 +85,11 @@ public class Api {
 			{
 				url.setReponseCode(Tools.sendDel(url.getLink()));
 			}
+			
+			if(url.getCodes().contains("default"))
+			{
+				url.setValided(true);
+			}
 		}
 
 		jsonObject.put("urls", urls);
@@ -123,9 +128,9 @@ public class Api {
 
 			for (String currentPathName : paths.keySet()) {
 				io.swagger.models.Path currentPath = paths.get(currentPathName);
-				
+
 				logger.debug("getPath : current path ==>"+currentPathName);
-				
+
 				if (currentPath.getGet() != null) {
 					UrlInfo dataCurrentPath = new UrlInfo();
 
@@ -163,8 +168,11 @@ public class Api {
 					for (int i=0;i<listParams.size();i++)
 					{
 						linkBase = linkBase.replace("{" + listParams.get(i).getName() + "}", Tools.generateTestData());
-						params.put(listParams.get(i).getName(),Tools.generateTestData());
-						logger.debug("POST :  "+params.toString()+ " for path "+linkBase);
+						if(listParams.get(i).getRequired())
+						{
+							params.put(listParams.get(i).getName(),Tools.generateTestData());
+							logger.debug("POST :  "+params.toString()+ " for path "+linkBase);
+						}
 					}
 
 					dataCurrentPath.setLink(linkBase);
