@@ -1,5 +1,8 @@
 package esir3.vv;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,29 +46,6 @@ public class Tools {
 		return String.valueOf(responseCode);
 	}
 
-	/**
-	 * generate String
-	 * @param length length
-	 * @return generate text
-	 */
-	public static String randomString(int length) {
-		String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-		Random random = new Random();
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < length; i++) {
-			int num = random.nextInt(62);
-			buf.append(str.charAt(num));
-		}
-		return buf.toString();
-	}
-
-	/**
-	 * generate Test
-	 * @return text
-	 */
-	public static String generateTestData() {
-		return randomString(10);
-	}
 
 
 	/**
@@ -162,6 +142,48 @@ public class Tools {
 		logger.debug("Sending 'POST' request to URL : " + url);
 		logger.debug("Response Code : " + responseCode);
 		return String.valueOf(responseCode);
+	}
+
+	/**
+	 * send Delete request
+	 * @param url url
+	 * @return reponseCode
+	 * @throws Exception
+	 */
+	public static String sendDel(String url) throws Exception {
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		HttpResponse response = httpClient.execute(new HttpDelete(url));
+		BufferedReader in = new BufferedReader(
+				new InputStreamReader(response.getEntity().getContent()));
+		int reponseCode = response.getStatusLine().getStatusCode();
+		System.out.println("\nSending 'Delete' request to URL : " + url);
+		System.out.println("Response Code : " + reponseCode);
+		return String.valueOf(reponseCode);
+	}
+
+
+	/**
+	 * generate String
+	 * @param length length
+	 * @return generate text
+	 */
+	public static String randomString(int length) {
+		String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+		Random random = new Random();
+		StringBuffer buf = new StringBuffer();
+		for (int i = 0; i < length; i++) {
+			int num = random.nextInt(62);
+			buf.append(str.charAt(num));
+		}
+		return buf.toString();
+	}
+
+	/**
+	 * generate Test
+	 * @return text
+	 */
+	public static String generateTestData() {
+		return randomString(10);
 	}
 
 }

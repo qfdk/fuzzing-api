@@ -81,6 +81,10 @@ public class Api {
 			{
 				url.setReponseCode(Tools.sendPost(url.getLink(), url.getParameters()));
 			}
+			if(url.getOperationType().equals(OperationType.DELETE.toString()))
+			{
+				url.setReponseCode(Tools.sendDel(url.getLink()));
+			}
 		}
 
 		jsonObject.put("urls", urls);
@@ -167,6 +171,31 @@ public class Api {
 					dataCurrentPath.setParameters(params);
 					urlInfos.add(dataCurrentPath);
 				}
+
+
+				if (currentPath.getDelete() != null) {
+					UrlInfo dataCurrentPath = new UrlInfo();
+
+					dataCurrentPath.setOperationType(OperationType.DELETE.toString());
+
+					//	Get all responses codes
+					dataCurrentPath.setCodes(paths.get(currentPathName).getGet().getResponses().keySet());
+
+					// Get all link with data
+					String linkBase = swagger.getSchemes().get(0).toString().toLowerCase() + "://" + swagger.getHost() + swagger.getBasePath() + currentPathName;
+
+					if (!currentPath.getDelete().getParameters().isEmpty()) {
+						for (Parameter parameter : currentPath.getDelete().getParameters()) {
+							linkBase = linkBase.replace("{" + parameter.getName() + "}", Tools.generateTestData());
+							dataCurrentPath.setLink(linkBase);
+						}
+					} else {
+						dataCurrentPath.setLink(linkBase);
+					}
+
+					urlInfos.add(dataCurrentPath);
+				}
+
 			}
 			data.setHostname(swagger.getHost());
 			data.setUrls(urlInfos);
