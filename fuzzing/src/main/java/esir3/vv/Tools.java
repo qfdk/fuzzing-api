@@ -3,13 +3,11 @@ package esir3.vv;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
@@ -18,7 +16,9 @@ import java.util.Random;
 import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
 
 /**
+ *
  * Created by qfdk on 2016/11/16.
+ *
  */
 public class Tools {
 
@@ -147,20 +147,25 @@ public class Tools {
 	/**
 	 * send Delete request
 	 * @param url url
-	 * @return reponseCode
-	 * @throws Exception
+	 * @return responseCode
+	 * @throws Exception e
 	 */
 	public static String sendDel(String url) throws Exception {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpResponse response = httpClient.execute(new HttpDelete(url));
-		BufferedReader in = new BufferedReader(
-				new InputStreamReader(response.getEntity().getContent()));
 		int reponseCode = response.getStatusLine().getStatusCode();
 		logger.debug("\nSending 'Delete' request to URL : " + url);
 		logger.debug("Response Code : " + reponseCode);
 		return String.valueOf(reponseCode);
 	}
 
+	/**
+	 * send PUT request
+	 * @param url url
+	 * @param map key value
+	 * @return responseCode
+	 * @throws Exception e
+	 */
 	public static String sendPut(String url, Map<String, String> map) throws Exception {
 
 		URL obj = new URL(url);
@@ -171,17 +176,13 @@ public class Tools {
 		con.setRequestProperty("User-Agent", USER_AGENT);
 		con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
 		con.setRequestProperty("Content-Type", "application/json; charset=utf8");
-		StringBuilder sb = new StringBuilder();
 
-		for (String s : map.keySet()) {
-			sb.append(s).append("=").append(map.get(s)).append("&");
-		}
-		String urlParameters = sb.toString().substring(0, sb.length() - 1);
-		logger.debug(urlParameters);
+		JSONObject data = new JSONObject(map);
+
 		// Send post request
 		con.setDoOutput(true);
 		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-		wr.writeBytes(urlParameters);
+		wr.writeBytes(data.toString());
 		wr.flush();
 		wr.close();
 		int responseCode = con.getResponseCode();
