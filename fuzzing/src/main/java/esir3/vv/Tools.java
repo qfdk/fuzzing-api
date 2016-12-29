@@ -228,7 +228,12 @@ public class Tools {
 	public static String generateTestData(Parameter param) {
 
 		String type = "";
+		if(param instanceof io.swagger.models.parameters.PathParameter){
+			type = ((io.swagger.models.parameters.PathParameter) param).getType();
 
+		}else if(param instanceof io.swagger.models.parameters.BodyParameter){
+			type = "body";
+		}
 		switch (type) {
 
 		case "integer":
@@ -242,11 +247,10 @@ public class Tools {
 			return randomString(10);
 
 		case "body":
-			return "body";
+			// TODO 
 
 		default: 
 			return "DEFAULT";
-
 		}
 	}
 
