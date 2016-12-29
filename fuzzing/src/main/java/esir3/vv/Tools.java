@@ -1,19 +1,26 @@
 package esir3.vv;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.io.*;
+import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
+
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 
-import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.swagger.models.parameters.Parameter;
 
 /**
  *
@@ -130,12 +137,17 @@ public class Tools {
 		for (String s : map.keySet()) {
 			sb.append(s).append("=").append(map.get(s)).append("&");
 		}
-		String urlParameters = sb.toString().substring(0, sb.length() - 1);
-		logger.debug(urlParameters);
-		// Send post request
+
 		con.setDoOutput(true);
 		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-		wr.writeBytes(urlParameters);
+		if(!map.keySet().isEmpty())
+		{
+			String urlParameters = sb.toString().substring(0, sb.length() - 1);
+			logger.debug(urlParameters);
+
+			// Send post request
+			wr.writeBytes(urlParameters);
+		}
 		wr.flush();
 		wr.close();
 		int responseCode = con.getResponseCode();
@@ -198,7 +210,7 @@ public class Tools {
 	 * @param length length
 	 * @return generate text
 	 */
-	public static String randomString(int length) {
+	private static String randomString(int length) {
 		String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 		Random random = new Random();
 		StringBuffer buf = new StringBuffer();
@@ -213,8 +225,47 @@ public class Tools {
 	 * generate Test
 	 * @return text
 	 */
-	public static String generateTestData() {
-		return randomString(10);
+	public static String generateTestData(Parameter param) {
+
+		String type = "";
+
+		switch (type) {
+
+		case "integer":
+		case "number":
+			return randomInteger(100);
+
+		case "boolean":
+			return randomBoolean();
+
+		case "string" :
+			return randomString(10);
+
+		case "body":
+			return "body";
+
+		default: 
+			return "DEFAULT";
+
+		}
 	}
 
+	/**
+	 * generate boolean
+	 * @return 
+	 */
+	private static String randomBoolean() {
+		return Math.random() > 0.5 ? "true" : "false";
+	}
+
+
+	/**
+	 * generate integer betwen 0 and max
+	 * @param max : max value
+	 * @return 
+	 */
+	private static String randomInteger(int max) {
+
+		return String.valueOf((int)Math.random()*20);
+	}
 }

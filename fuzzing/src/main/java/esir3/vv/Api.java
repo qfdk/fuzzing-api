@@ -1,13 +1,9 @@
 package esir3.vv;
-
-
-import esir3.vv.Tools.OperationType;
-import io.swagger.models.Swagger;
-import io.swagger.models.parameters.Parameter;
-import io.swagger.parser.SwaggerParser;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -15,11 +11,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import esir3.vv.Tools.OperationType;
+import io.swagger.models.Swagger;
+import io.swagger.models.parameters.Parameter;
+import io.swagger.parser.SwaggerParser;
 
 /**
  * Created by qfdk on 19/10/2016.
@@ -73,19 +73,19 @@ public class Api {
 
 		// add del chang post put ..
 		for (UrlInfo url : urls) {
-			if(url.getOperationType().equals(OperationType.GET.toString()))
+			if(url.getOperationType().equals(Tools.OperationType.GET.toString()))
 			{
 				url.setReponseCode(Tools.sendGet(url.getLink()));
 			}
-			if(url.getOperationType().equals(OperationType.POST.toString()))
+			if(url.getOperationType().equals(Tools.OperationType.POST.toString()))
 			{
 				url.setReponseCode(Tools.sendPost(url.getLink(), url.getParameters()));
 			}
-			if(url.getOperationType().equals(OperationType.DELETE.toString()))
+			if(url.getOperationType().equals(Tools.OperationType.DELETE.toString()))
 			{
 				url.setReponseCode(Tools.sendDel(url.getLink()));
 			}
-			if(url.getOperationType().equals(OperationType.PUT.toString()))
+			if(url.getOperationType().equals(Tools.OperationType.PUT.toString()))
 			{
 				url.setReponseCode(Tools.sendPut(url.getLink(),url.getParameters()));
 			}
@@ -115,7 +115,7 @@ public class Api {
 		return Response.status(200).entity(ret.toString()).build();
 	}
 
-	**
+	/**
 	 * http://localhost:8080/api/v1/getPath
 	 *
 	 * @throws Exception
