@@ -12,14 +12,11 @@
         <div class="input-group">
           <input id="url" type="text" v-model="url" class="form-control"/>
           <span class="input-group-btn">
-            <button id="go" class="btn btn-primary" data-toggle="modal" data-target="#myModal"
-            type="button" v-on:click="say" >Go!</button>
+            <button id="go" class="btn btn-primary" type="button" v-on:click="say" >Go!</button>
           </span>
         </div>
-            {{url}}
       </div>
     </div>
-
     <br>
     <div class="jumbotron" style="background-color: #fff9f0;">
       <table class="table">
@@ -42,33 +39,41 @@
           </tr>
         </tbody>
       </table>
-
     </div>
-
+    <spinner ref="spinner" :size="size" :fixed="fixed" text="I'm doing my work now... " style="display: none;"></spinner>
     <hr/>
   </template>
 
   <script>
+
+  import spinner from 'vue-strap/src/spinner';
+
   export default {
     name:'middle',
+    components:{
+      spinner
+    },
     data(){
       return {
         msg:"sss",
         url:"http://petstore.swagger.io/v2/swagger.json",
-        resultats:""
+        resultats:"",
+        fixed:true,
+        size:'lg'
       }
     },
     methods:{
       say:function()
       {
+        this.$refs.spinner.show()
         var tmp='http://'+window.location['hostname']+':8080/api/v1/getPath?url=';
         this.$http.get(tmp+this.url).then((result) => {
           console.log(result.body.urls);
-           this.resultats=result.body.urls;
+          this.resultats=result.body.urls;
+          this.$refs.spinner.hide()
         }, (error) => {
 
         })
-        // this.resultats={"hostname":"petstore.swagger.io","urls":[{"codes":["405"],"valided":false,"reponseCode":"400","link":"http://petstore.swagger.io/v2/pet","operationType":"POST","parameters":{"body":"zwrWicBkQk"}},{"codes":["200","400"],"valided":true,"reponseCode":"200","link":"http://petstore.swagger.io/v2/pet/findByStatus","operationType":"GET","parameters":{}},{"codes":["200","400"],"valided":true,"reponseCode":"200","link":"http://petstore.swagger.io/v2/pet/findByTags","operationType":"GET","parameters":{}},{"codes":["200","400","404"],"valided":true,"reponseCode":"404","link":"http://petstore.swagger.io/v2/pet/NQmlCfzPdX","operationType":"GET","parameters":{}},{"codes":["405"],"valided":false,"reponseCode":"415","link":"http://petstore.swagger.io/v2/pet/Qbdpx5Ipqu","operationType":"POST","parameters":{"petId":"xDb9536kJd","name":"9IDK3G9Rcu","status":"LFtO5r0PDI"}},{"codes":["200"],"valided":false,"reponseCode":"415","link":"http://petstore.swagger.io/v2/pet/sj8QjiZQpU/uploadImage","operationType":"POST","parameters":{"file":"Dk6Gw9sQVm","petId":"0ao7jAQp93","additionalMetadata":"Q0rLKmtlgT"}},{"codes":["200"],"valided":true,"reponseCode":"200","link":"http://petstore.swagger.io/v2/store/inventory","operationType":"GET","parameters":{}},{"codes":["200","400"],"valided":true,"reponseCode":"400","link":"http://petstore.swagger.io/v2/store/order","operationType":"POST","parameters":{"body":"QnZW6ZaWoX"}},{"codes":["200","400","404"],"valided":true,"reponseCode":"404","link":"http://petstore.swagger.io/v2/store/order/e14gLXJu9q","operationType":"GET","parameters":{}},{"codes":["default"],"valided":false,"reponseCode":"400","link":"http://petstore.swagger.io/v2/user","operationType":"POST","parameters":{"body":"BmLuMSxbNE"}},{"codes":["default"],"valided":false,"reponseCode":"400","link":"http://petstore.swagger.io/v2/user/createWithArray","operationType":"POST","parameters":{"body":"ZKVl4VUwwR"}},{"codes":["default"],"valided":false,"reponseCode":"400","link":"http://petstore.swagger.io/v2/user/createWithList","operationType":"POST","parameters":{"body":"lFGvHoZe2t"}},{"codes":["200","400"],"valided":true,"reponseCode":"200","link":"http://petstore.swagger.io/v2/user/login","operationType":"GET","parameters":{}},{"codes":["default"],"valided":false,"reponseCode":"200","link":"http://petstore.swagger.io/v2/user/logout","operationType":"GET","parameters":{}},{"codes":["200","400","404"],"valided":true,"reponseCode":"404","link":"http://petstore.swagger.io/v2/user/9eA2aXJgW0","operationType":"GET","parameters":{}}]};
       }
     },
     created:function(){
