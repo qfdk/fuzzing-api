@@ -115,5 +115,115 @@ public class Api {
 		return Response.status(200).entity(ret.toString()).build();
 	}
 
-	
+	**
+	 * http://localhost:8080/api/v1/getPath
+	 *
+	 * @throws Exception
+	 */
+	@GET
+	@Path("getPath")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getPath(@QueryParam("url") String url) throws Exception {
+		Swagger swagger = new SwaggerParser().read(url);
+		List<UrlInfo> urlInfos = new ArrayList<>();
+
+		if (swagger != null) {
+			Map<String, io.swagger.models.Path> paths = swagger.getPaths();
+
+			for (String currentPathName : paths.keySet()) {
+				io.swagger.models.Path currentPath = paths.get(currentPathName);
+				logger.debug("getPath : current path ==>"+currentPathName);
+
+				UrlInfo dataCurrentPath = new UrlInfo(); 
+
+				if (currentPath.getGet() != null) {
+					dataCurrentPath.setOperationType(OperationType.GET.toString());
+					dataCurrentPath.setCodes(paths.get(currentPathName).getGet().getResponses().keySet());
+
+					dataCurrentPath.setLink(swagger.getSchemes().get(0).toString().toLowerCase() + "://" + swagger.getHost() + swagger.getBasePath() + currentPathName);
+
+					if (!currentPath.getGet().getParameters().isEmpty()) {
+						for (Parameter parameter : currentPath.getGet().getParameters()) {
+							String linkWithParam = dataCurrentPath.getLink(); 
+							dataCurrentPath.setLink( linkWithParam.replace("{" + parameter.getName() + "}", Tools.generateTestData(parameter)));
+						}
+					} 
+					urlInfos.add(dataCurrentPath);
+				}
+
+				if (currentPath.getPost() != null) {
+					dataCurrentPath = new UrlInfo();
+
+					dataCurrentPath.setOperationType(OperationType.POST.toString());
+					dataCurrentPath.setCodes(paths.get(currentPathName).getPost().getResponses().keySet());
+					String linkBase = swagger.getSchemes().get(0).toString().toLowerCase() + "://" + swagger.getHost() + swagger.getBasePath() + currentPathName;
+
+
+					Map<String,String> postParamsContent=new TreeMap<>();
+					
+					List<Parameter> listParams = currentPath.getPost().getParameters();
+					for (Parameter param : listParams){
+						linkBase = linkBase.replace("{" + param.getName() + "}", Tools.generateTestData(param));
+						if(param.getIn().equals("formData"))
+						{
+							postParamsContent.put(param.getName(),Tools.generateTestData(param));
+						}
+						logger.debug("POST :  "+postParamsContent.toString()+ " for path "+linkBase);
+					}
+
+					dataCurrentPath.setLink(linkBase);
+					dataCurrentPath.setParameters(postParamsContent);
+					urlInfos.add(dataCurrentPath);
+				}
+
+
+				if (currentPath.getDelete() != null) {
+					dataCurrentPath = new UrlInfo();
+					dataCurrentPath.setOperationType(OperationType.DELETE.toString());
+					dataCurrentPath.setCodes(paths.get(currentPathName).getGet().getResponses().keySet());
+
+					dataCurrentPath.setLink(swagger.getSchemes().get(0).toString().toLowerCase() + "://" + swagger.getHost() + swagger.getBasePath() + currentPathName);
+
+					if (!currentPath.getDelete().getParameters().isEmpty()) {
+						for (Parameter parameter : currentPath.getDelete().getParameters()) {
+							String linkBase = dataCurrentPath.getLink().replace("{" + parameter.getName() + "}", Tools.generateTestData(parameter));
+							dataCurrentPath.setLink(linkBase);
+						}
+					} 
+					urlInfos.add(dataCurrentPath);
+				}
+
+				if (currentPath.getPut() != null) {
+					dataCurrentPath = new UrlInfo();
+					dataCurrentPath.setOperationType(OperationType.PUT.toString());
+					dataCurrentPath.setCodes(paths.get(currentPathName).getPut().getResponses().keySet());
+					
+					String linkBase = swagger.getSchemes().get(0).toString().toLowerCase() + "://" + swagger.getHost() + swagger.getBasePath() + currentPathName;
+
+					List<Parameter> listParams = currentPath.getPut().getParameters();
+					Map<String,String> params=new TreeMap<>();
+
+					for (Parameter param : listParams){
+						linkBase = linkBase.replace("{" + param.getName() + "}", Tools.generateTestData(param));
+						params.put(param.getName(),Tools.generateTestData(param));
+						logger.debug("PUT :  "+params.toString()+ " for path "+linkBase);
+					}
+
+					dataCurrentPath.setLink(linkBase);
+					dataCurrentPath.setParameters(params);
+					urlInfos.add(dataCurrentPath);
+				}
+
+			}
+			data.setHostname(swagger.getHost());
+			data.setUrls(urlInfos);
+		} else {
+			JSONObject ret = new JSONObject();
+			ret.put("msg", "SWAGGER FILE IS INVALID");
+			return Response.status(200).entity(ret.toString()).build();
+		}
+		logger.debug("getPath result : \n"+ urlInfos);
+		logger.info("END of getPath :  "+urlInfos.size()+ " url send to analyse function");
+		return Response.temporaryRedirect(new URI(this.base_url + "/api/v1/analyse")).build();
+	}
 }
