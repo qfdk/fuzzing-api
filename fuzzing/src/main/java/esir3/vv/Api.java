@@ -167,6 +167,7 @@ public class Api {
 
 					List<Parameter> listParams = currentPath.getPost().getParameters();
 
+
 					Map<String,String> params=new TreeMap<>();
 
 					for (int i=0;i<listParams.size();i++)
@@ -175,6 +176,7 @@ public class Api {
 						params.put(listParams.get(i).getName(),Tools.generateTestData());
 						logger.debug("POST :  "+params.toString()+ " for path "+linkBase);
 					}
+					System.err.println(params);
 
 					dataCurrentPath.setLink(linkBase);
 					dataCurrentPath.setParameters(params);
