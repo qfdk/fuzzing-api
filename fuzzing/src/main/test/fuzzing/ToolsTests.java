@@ -1,15 +1,18 @@
 /**
- * 
+ *
  */
 package fuzzing;
 
 import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import esir3.vv.Tools;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Maiga
- *
  */
 public class ToolsTests {
 
@@ -17,23 +20,46 @@ public class ToolsTests {
 	public void veryComplexTest() {
 		assertTrue(true);
 	}
-	
-	@Test(expected=java.net.UnknownHostException.class)
-	public void testGetBadUrl() throws Exception {
-		Tools.sendGet("https://www.youssli.fr/en");	
-	}
-	
+
 	@Test
-	public void testGetGoodUrl() throws Exception {
-		String ret = Tools.sendGet("https://www.google.fr/");
-		assertTrue(ret.split("#")[0].equals("200"));
-		System.out.println(ret);
+	public void testSendGet1() throws Exception {
+		String res = Tools.sendGet("http://localhost:8080/en").get(0);
+		assertTrue(res.equals("404"));
 	}
-	
+
 	@Test
-	public void testGetGoodUrl2() throws Exception {
-		String ret = Tools.sendGet("https://www.google.fr/");
+	public void testSendGet2() throws Exception {
+		String res = Tools.sendGet("http://localhost:8080/").get(0);
+		assertTrue(res.equals("200"));
+	}
+
+	@Test
+	public void testSendGet3() throws Exception {
+		String ret = Tools.sendGet("http://localhost:8080/api/v1/").get(0);
 		System.out.println(ret);
-		assertTrue(ret.split("#")[0].equals("200"));
+		assertTrue(ret.equals("405"));
+	}
+
+	@Test
+	public void testSendGet4() throws Exception {
+		String url = "http://localhost:8080/api/v1/getStatus";
+		String ret = Tools.sendGet(url).get(0);
+		assertTrue(ret.equals("200")&&"{status:ok,msg:api works!}".equals(Tools.sendGet(url).get(1)));
+	}
+
+	@Test
+	public void testSendGet5() throws Exception {
+		List<String> codes = new ArrayList<>();
+		codes.add("200");
+		codes.add("400");
+		codes.add("404");
+		codes.add("405");
+
+		List<String> resp = new ArrayList<>();
+		for (String code : codes) {
+			String tmp = Tools.sendGet("http://localhost:8080/api/v1/testCode?code=" + code).get(0);
+			resp.add(tmp);
+		}
+		assertTrue(codes.equals(resp));
 	}
 }

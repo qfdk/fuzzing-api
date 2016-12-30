@@ -28,12 +28,13 @@
           <table class="table table-condensed">
             <thead>
               <tr>
-                <th>Type</th> <th>reponse code</th><th>Reponse code</th><th>Parameters</th>
+                <th>Type</th> <th>reponse code</th><th>Reponse code</th><th>Parameters</th><th>Reponse</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>{{res.operationType}}</td><td>{{res.codes}}</td> <td>{{res.reponseCode}}</td><td>{{res.parameters}}</td>
+                <td>{{res.reponseBody}}</td>
               </tr>
             </tbody>
           </table>

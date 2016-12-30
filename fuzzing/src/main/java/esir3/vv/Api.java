@@ -75,7 +75,8 @@ public class Api {
 		for (UrlInfo url : urls) {
 			if(url.getOperationType().equals(Tools.OperationType.GET.toString()))
 			{
-				url.setReponseCode(Tools.sendGet(url.getLink()));
+				url.setReponseCode(Tools.sendGet(url.getLink()).get(0));
+				url.setReponseBody(Tools.sendGet(url.getLink()).get(1));
 			}
 			if(url.getOperationType().equals(Tools.OperationType.POST.toString()))
 			{
@@ -109,9 +110,9 @@ public class Api {
 	public Response saveConf(@QueryParam("path") String path) throws Exception {
 		Map<String, String> map = new TreeMap<>();
 		map.put("base_url", "http://localhost:8080");
-		Tools.saveConf(map, "conf/conf.xml");
+		Tools.saveConf(map, path);
 		JSONObject ret = new JSONObject();
-		ret.put("msg", Tools.readConf("conf/conf.xml").getProperty("base_url"));
+		ret.put("msg", Tools.readConf(path).getProperty("base_url"));
 		return Response.status(200).entity(ret.toString()).build();
 	}
 
@@ -225,5 +226,14 @@ public class Api {
 		logger.debug("getPath result : \n"+ urlInfos);
 		logger.info("END of getPath :  "+urlInfos.size()+ " url send to analyse function");
 		return Response.temporaryRedirect(new URI(this.base_url + "/api/v1/analyse")).build();
+	}
+
+	@GET
+	@Path("testCode")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response testReponseCode(@QueryParam("code") String code) throws Exception {
+		JSONObject jsonObject=new JSONObject();
+		jsonObject.put("code",code);
+		return Response.status(Integer.parseInt(code)).entity(jsonObject.toString()).build();
 	}
 }

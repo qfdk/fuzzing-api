@@ -2,17 +2,12 @@ package esir3.vv;
 
 import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
 
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
 
+import jdk.nashorn.internal.ir.ReturnNode;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -36,21 +31,21 @@ public class Tools {
 	static Logger logger = LoggerFactory.getLogger(Tools.class);
 
 	// HTTP GET request
-	public static String sendGet(String url) throws Exception {
-
+	public static List<String> sendGet(String url) throws Exception {
+		List<String> list = new ArrayList<>();
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
 		// optional default is GET
 		con.setRequestMethod("GET");
-
 		//add request header
 		con.setRequestProperty("User-Agent", USER_AGENT);
-
 		int responseCode = con.getResponseCode();
 		logger.debug("Sending 'GET' request to URL : " + url);
 		logger.debug("Response Code : " + responseCode);
-		return String.valueOf(responseCode);
+		String body=printUrlContents(obj);
+		list.add(String.valueOf(responseCode));
+		list.add(body);
+		return list;
 	}
 
 
@@ -203,7 +198,28 @@ public class Tools {
 		return String.valueOf(responseCode);
 	}
 
-
+	/**
+	 * print Contents
+	 * @param url url
+	 * @throws IOException
+	 */
+	private static String printUrlContents(URL url) {
+		try {
+			try(InputStream stream = url.openStream();
+			    BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
+				StringBuilder sb = new StringBuilder();
+				String line;
+				while((line = reader.readLine()) != null) {
+					System.out.println(line);
+					sb.append(line);
+				}
+				return sb.toString();
+			}
+		} catch (IOException e) {
+			System.err.println("Something was wrong");
+			return "ERROR";
+		}
+	}
 
 	/**
 	 * generate String

@@ -17,6 +17,7 @@ public class UrlInfo {
 	private String reponseCode;
 	private String operationType;
 	private Map<String, String> params;
+	private String reponseBody;
 
 	/**
 	 * Info of un url
@@ -97,6 +98,14 @@ public class UrlInfo {
 	public String toString() {
 
 		return "(" + operationType + ")=>" + link;
+	}
+
+	public String getReponseBody() {
+		return reponseBody;
+	}
+
+	public void setReponseBody(String reponseBody) {
+		this.reponseBody = reponseBody;
 	}
 }
 
