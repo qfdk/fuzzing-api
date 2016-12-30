@@ -47,6 +47,13 @@
       <strong>Well Done!</strong>
       <p>You successfully read this important alert message :)</p>
     </alert>
+
+    <alert v-model="showRightD" placement="top-right" duration="5000" type="danger" width="400px" dismissable>
+      <span class="icon-ok-circled alert-icon-float-left"></span>
+      <strong>Something was wrong!</strong>
+      <p>Try again latter :(</p>
+    </alert>
+
   </template>
 
   <script>
@@ -74,7 +81,8 @@
         selected: 'info',
         checked:true,
         init_info:true,
-        showRight:false
+        showRight:false,
+        showRightD:false
       }
     },
     methods:{
@@ -82,12 +90,16 @@
       {
         this.$refs.spinner.show()
         this.init_info=false;
+        this.showRightD=false;
         var tmp='http://'+window.location['hostname']+':8080/api/v1/getPath?url=';
         this.$http.get(tmp+this.url).then((result) => {
           this.results=result.body.urls;
           this.$refs.spinner.hide()
           this.showRight=true;
         }, (error) => {
+          this.$refs.spinner.hide()
+          this.showRightD=true;
+          this.init_info=true;
         })
       }
     }
