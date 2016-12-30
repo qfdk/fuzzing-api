@@ -5,11 +5,15 @@ package fuzzing;
 
 import static org.junit.Assert.assertTrue;
 
+import org.json.JSONObject;
 import org.junit.Test;
 import esir3.vv.Tools;
 
+import javax.json.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author Maiga
@@ -61,5 +65,22 @@ public class ToolsTests {
 			resp.add(tmp);
 		}
 		assertTrue(codes.equals(resp));
+	}
+
+
+	@Test
+	public void testSendPost1() throws Exception {
+		JSONObject jsonObject=new JSONObject();
+		jsonObject.put("name","coucou");
+		jsonObject.put("age","20");
+
+		Map<String,String> map=new TreeMap<>();
+		map.put("name","coucou");
+		map.put("age","20");
+
+		List<String> resp = new ArrayList<>();
+		resp= Tools.sendPost("http://localhost:8080/api/v1/testPost",map);
+		System.out.print(resp);
+		assertTrue(resp.get(0).equals("200"));
 	}
 }

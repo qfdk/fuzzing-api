@@ -18,15 +18,17 @@ import org.slf4j.LoggerFactory;
 import io.swagger.models.parameters.Parameter;
 
 /**
- *
  * Created by qfdk on 2016/11/16.
- *
  */
 public class Tools {
 
-	public enum type {Integer, String};
+	public enum type {Integer, String}
 
-	public enum OperationType {POST, GET, PUT, DELETE};
+	;
+
+	public enum OperationType {POST, GET, PUT, DELETE}
+
+	;
 
 	static Logger logger = LoggerFactory.getLogger(Tools.class);
 
@@ -41,13 +43,12 @@ public class Tools {
 		int responseCode = con.getResponseCode();
 		logger.debug("Sending 'GET' request to URL : " + url);
 		logger.debug("Response Code : " + responseCode);
-		String body=printUrlContents(obj);
+		String body = printUrlContents(obj);
 		List<String> list = new ArrayList<>();
 		list.add(String.valueOf(responseCode));
 		list.add(body);
 		return list;
 	}
-
 
 
 	/**
@@ -153,8 +154,10 @@ public class Tools {
 		list.add(body);
 		return list;
 	}
+
 	/**
 	 * send Delete request
+	 *
 	 * @param url url
 	 * @return responseCode
 	 * @throws Exception e
@@ -165,7 +168,7 @@ public class Tools {
 		int responseCode = response.getStatusLine().getStatusCode();
 		logger.debug("\nSending 'Delete' request to URL : " + url);
 		logger.debug("Response Code : " + responseCode);
-		String body=printUrlContents(new URL(url));
+		String body = printUrlContents(new URL(url));
 		List<String> list = new ArrayList<>();
 		list.add(String.valueOf(responseCode));
 		list.add(body);
@@ -174,6 +177,7 @@ public class Tools {
 
 	/**
 	 * send PUT request
+	 *
 	 * @param url url
 	 * @param map key value
 	 * @return responseCode
@@ -201,7 +205,7 @@ public class Tools {
 		int responseCode = con.getResponseCode();
 		logger.debug("Sending 'PUT' request to URL : " + url);
 		logger.debug("Response Code : " + responseCode);
-		String body=printUrlContents(obj);
+		String body = printUrlContents(obj);
 		List<String> list = new ArrayList<>();
 		list.add(String.valueOf(responseCode));
 		list.add(body);
@@ -210,21 +214,22 @@ public class Tools {
 
 	/**
 	 * print Contents
+	 *
 	 * @param url url
 	 * @throws IOException
 	 */
 	private static String printUrlContents(URL url) {
 		try {
-			try(InputStream stream = url.openStream();
-			    BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
-				StringBuilder sb = new StringBuilder();
-				String line;
-				while((line = reader.readLine()) != null) {
-					System.out.println(line);
-					sb.append(line);
-				}
-				return sb.toString();
+			InputStream stream = url.openStream();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+			StringBuilder sb = new StringBuilder();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				System.out.println(line);
+				sb.append(line);
 			}
+			return sb.toString();
+
 		} catch (IOException e) {
 			System.err.println("Something was wrong");
 			return "ERROR";
@@ -233,6 +238,7 @@ public class Tools {
 
 	/**
 	 * generate String
+	 *
 	 * @param length length
 	 * @return generate text
 	 */
@@ -249,40 +255,42 @@ public class Tools {
 
 	/**
 	 * generate Test
+	 *
 	 * @return text
 	 */
 	public static String generateTestData(Parameter param) {
 
 		String type = "";
-		if(param instanceof io.swagger.models.parameters.PathParameter){
+		if (param instanceof io.swagger.models.parameters.PathParameter) {
 			type = ((io.swagger.models.parameters.PathParameter) param).getType();
 
-		}else if(param instanceof io.swagger.models.parameters.BodyParameter){
+		} else if (param instanceof io.swagger.models.parameters.BodyParameter) {
 			type = "body";
 		}
 		switch (type) {
 
-		case "integer":
-		case "number":
-			return randomInteger(100);
+			case "integer":
+			case "number":
+				return randomInteger(100);
 
-		case "boolean":
-			return randomBoolean();
+			case "boolean":
+				return randomBoolean();
 
-		case "string" :
-			return randomString(10);
+			case "string":
+				return randomString(10);
 
-		case "body":
-			// TODO 
+			case "body":
+				// TODO
 
-		default: 
-			return "DEFAULT";
+			default:
+				return "DEFAULT";
 		}
 	}
 
 	/**
 	 * generate boolean
-	 * @return 
+	 *
+	 * @return
 	 */
 	private static String randomBoolean() {
 		return Math.random() > 0.5 ? "true" : "false";
@@ -291,11 +299,12 @@ public class Tools {
 
 	/**
 	 * generate integer betwen 0 and max
+	 *
 	 * @param max : max value
-	 * @return 
+	 * @return
 	 */
 	private static String randomInteger(int max) {
 
-		return String.valueOf((int)Math.random()*20);
+		return String.valueOf((int) Math.random() * 20);
 	}
 }

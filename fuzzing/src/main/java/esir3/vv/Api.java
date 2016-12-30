@@ -5,13 +5,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.sun.jersey.multipart.FormDataParam;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -239,5 +237,23 @@ public class Api {
 		JSONObject jsonObject=new JSONObject();
 		jsonObject.put("code",code);
 		return Response.status(Integer.parseInt(code)).entity(jsonObject.toString()).build();
+	}
+
+	@POST
+	@Path("testPost")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response testPost(@FormParam("name") String name,@FormParam("age")String age)  {
+		JSONObject jsonObject=new JSONObject();
+		jsonObject.put("name",name);
+		jsonObject.put("age",age);
+		System.out.println(jsonObject);
+		return Response.status(200).entity(jsonObject.toString()).build();
+	}
+
+	@POST
+	@Path("/{param}")
+	public Response postMsg(@PathParam("param") String msg) {
+		String output = "POST:Jersey say : " + msg;
+		return Response.status(200).entity(output).build();
 	}
 }
