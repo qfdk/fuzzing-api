@@ -80,15 +80,19 @@ public class Api {
 			}
 			if(url.getOperationType().equals(Tools.OperationType.POST.toString()))
 			{
-				url.setReponseCode(Tools.sendPost(url.getLink(), url.getParameters()));
+				url.setReponseCode(Tools.sendPost(url.getLink(),url.getParameters()).get(0));
+				url.setReponseBody(Tools.sendPost(url.getLink(),url.getParameters()).get(1));
+
 			}
 			if(url.getOperationType().equals(Tools.OperationType.DELETE.toString()))
 			{
-				url.setReponseCode(Tools.sendDel(url.getLink()));
+				url.setReponseCode(Tools.sendDel(url.getLink()).get(0));
+				url.setReponseBody(Tools.sendDel(url.getLink()).get(1));
 			}
 			if(url.getOperationType().equals(Tools.OperationType.PUT.toString()))
 			{
-				url.setReponseCode(Tools.sendPut(url.getLink(),url.getParameters()));
+				url.setReponseCode(Tools.sendPut(url.getLink(),url.getParameters()).get(0));
+				url.setReponseBody(Tools.sendPut(url.getLink(),url.getParameters()).get(1));
 			}
 
 			if(url.getCodes().contains("default"))

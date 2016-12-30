@@ -32,7 +32,6 @@ public class Tools {
 
 	// HTTP GET request
 	public static List<String> sendGet(String url) throws Exception {
-		List<String> list = new ArrayList<>();
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		// optional default is GET
@@ -43,6 +42,7 @@ public class Tools {
 		logger.debug("Sending 'GET' request to URL : " + url);
 		logger.debug("Response Code : " + responseCode);
 		String body=printUrlContents(obj);
+		List<String> list = new ArrayList<>();
 		list.add(String.valueOf(responseCode));
 		list.add(body);
 		return list;
@@ -117,7 +117,7 @@ public class Tools {
 	 * @return code 200/404 etc...
 	 * @throws Exception
 	 */
-	public static String sendPost(String url, Map<String, String> map) throws Exception {
+	public static List<String> sendPost(String url, Map<String, String> map) throws Exception {
 
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -135,8 +135,7 @@ public class Tools {
 
 		con.setDoOutput(true);
 		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-		if(!map.keySet().isEmpty())
-		{
+		if (!map.keySet().isEmpty()) {
 			String urlParameters = sb.toString().substring(0, sb.length() - 1);
 			logger.debug(urlParameters);
 
@@ -148,22 +147,29 @@ public class Tools {
 		int responseCode = con.getResponseCode();
 		logger.debug("Sending 'POST' request to URL : " + url);
 		logger.debug("Response Code : " + responseCode);
-		return String.valueOf(responseCode);
+		String body = printUrlContents(obj);
+		List<String> list = new ArrayList<>();
+		list.add(String.valueOf(responseCode));
+		list.add(body);
+		return list;
 	}
-
 	/**
 	 * send Delete request
 	 * @param url url
 	 * @return responseCode
 	 * @throws Exception e
 	 */
-	public static String sendDel(String url) throws Exception {
+	public static List<String> sendDel(String url) throws Exception {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpResponse response = httpClient.execute(new HttpDelete(url));
-		int reponseCode = response.getStatusLine().getStatusCode();
+		int responseCode = response.getStatusLine().getStatusCode();
 		logger.debug("\nSending 'Delete' request to URL : " + url);
-		logger.debug("Response Code : " + reponseCode);
-		return String.valueOf(reponseCode);
+		logger.debug("Response Code : " + responseCode);
+		String body=printUrlContents(new URL(url));
+		List<String> list = new ArrayList<>();
+		list.add(String.valueOf(responseCode));
+		list.add(body);
+		return list;
 	}
 
 	/**
@@ -173,7 +179,7 @@ public class Tools {
 	 * @return responseCode
 	 * @throws Exception e
 	 */
-	public static String sendPut(String url, Map<String, String> map) throws Exception {
+	public static List<String> sendPut(String url, Map<String, String> map) throws Exception {
 
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -195,7 +201,11 @@ public class Tools {
 		int responseCode = con.getResponseCode();
 		logger.debug("Sending 'PUT' request to URL : " + url);
 		logger.debug("Response Code : " + responseCode);
-		return String.valueOf(responseCode);
+		String body=printUrlContents(obj);
+		List<String> list = new ArrayList<>();
+		list.add(String.valueOf(responseCode));
+		list.add(body);
+		return list;
 	}
 
 	/**
