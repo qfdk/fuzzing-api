@@ -265,10 +265,7 @@ public class Tools {
 		if (param instanceof io.swagger.models.parameters.PathParameter) {
 			type = ((io.swagger.models.parameters.PathParameter) param).getType();
 
-		} else if (param instanceof io.swagger.models.parameters.BodyParameter) {
-			type = "body";
-		}
-		switch (type) {
+			switch (type) {
 
 			case "integer":
 			case "number":
@@ -280,14 +277,17 @@ public class Tools {
 			case "string":
 				return randomString(10);
 
-			case "body":
-				if (((BodyParameter) param).getSchema() != null &&  ((BodyParameter) param).getSchema().getReference() !=null)
-				return ((BodyParameter) param).getSchema().getReference();
-				else
-					return "{body}";
-
 			default:
 				return "DEFAULT";
+
+			}
+		}else if (param instanceof io.swagger.models.parameters.BodyParameter) {
+			if (((BodyParameter) param).getSchema() != null &&  ((BodyParameter) param).getSchema().getReference() !=null)
+				return ((BodyParameter) param).getSchema().getReference();
+			else
+				return "{body}";
+		}else{
+			return "DEFAULT";
 		}
 	}
 
