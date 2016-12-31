@@ -18,7 +18,7 @@ import java.util.TreeMap;
 /**
  * @author Maiga
  */
-public class ToolsTests {
+public class ToolsTest {
 
 	@Test
 	public void veryComplexTest() {
