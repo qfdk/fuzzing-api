@@ -261,9 +261,8 @@ public class Tools {
 	 */
 	public static String generateTestData(Parameter param) {
 
-		String type = "";
 		if (param instanceof io.swagger.models.parameters.PathParameter) {
-			type = ((io.swagger.models.parameters.PathParameter) param).getType();
+			String type = ((io.swagger.models.parameters.PathParameter) param).getType();
 
 			switch (type) {
 
