@@ -1,5 +1,6 @@
 package esir3.vv;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -17,6 +18,8 @@ public class UrlInfo {
 	private String reponseCode;
 	private String operationType;
 	private Map<String, String> params;
+	private Map<String, String> paramNameAndType; //  A Map with parameter as key and type as value
+
 	private String reponseBody;
 
 	/**
@@ -28,6 +31,7 @@ public class UrlInfo {
 		this.setValided(false);
 		this.reponseCode = "FFF";
 		this.params = new TreeMap<>();
+		this.paramNameAndType = new HashMap<>();
 	}
 
 	/**
@@ -106,6 +110,21 @@ public class UrlInfo {
 
 	public void setReponseBody(String reponseBody) {
 		this.reponseBody = reponseBody;
+	}
+
+	/**
+	 * A Map with parameter as key and type as value
+	 * @return the paramNameAndType
+	 */
+	public Map<String, String> getParamNameAndType() {
+		return paramNameAndType;
+	}
+
+	/**
+	 * @param paramNameAndType the paramNameAndType to set
+	 */
+	public void setParamNameAndType(Map<String, String> paramNameAndType) {
+		this.paramNameAndType = paramNameAndType;
 	}
 }
 

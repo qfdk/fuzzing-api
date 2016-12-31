@@ -145,45 +145,20 @@ public class Api {
 
 				if (currentPath.getGet() != null) {
 					dataCurrentPath.setOperationType(OperationType.GET.toString());
-
-					fillParamsMap(currentPath,dataCurrentPath);
-
 					dataCurrentPath.setCodes(paths.get(currentPathName).getGet().getResponses().keySet());
-					dataCurrentPath.setLink(swagger.getSchemes().get(0).toString().toLowerCase() + "://" + swagger.getHost() + swagger.getBasePath() + currentPathName);
-
-					if (!currentPath.getGet().getParameters().isEmpty()) {
-						for (Parameter parameter : currentPath.getGet().getParameters()) {
-							String linkWithParam = dataCurrentPath.getLink(); 
-							dataCurrentPath.setLink( linkWithParam.replace("{" + parameter.getName() + "}", Tools.generateTestData(parameter)));
-						}
-					} 
+			
+					List<Parameter> listParams = currentPath.getGet().getParameters();
+					fillData(dataCurrentPath,listParams,currentPathName,swagger );
+					
 					urlInfos.add(dataCurrentPath);
 				}
 
 				if (currentPath.getPost() != null) {
 					dataCurrentPath = new UrlInfo();
-
 					dataCurrentPath.setOperationType(OperationType.POST.toString());
-					fillParamsMap(currentPath,dataCurrentPath);
-
-					dataCurrentPath.setCodes(paths.get(currentPathName).getPost().getResponses().keySet());
-					String linkBase = swagger.getSchemes().get(0).toString().toLowerCase() + "://" + swagger.getHost() + swagger.getBasePath() + currentPathName;
-
-
-					Map<String,String> postParamsContent=new TreeMap<>();
 
 					List<Parameter> listParams = currentPath.getPost().getParameters();
-					for (Parameter param : listParams){
-						linkBase = linkBase.replace("{" + param.getName() + "}", Tools.generateTestData(param));
-						if(param.getIn().equals("formData") || param.getIn().equals("body"))
-						{
-							postParamsContent.put(param.getName(),Tools.generateTestData(param));
-						}
-						logger.debug("POST :  "+postParamsContent.toString()+ " for path "+linkBase);
-					}
-
-					dataCurrentPath.setLink(linkBase);
-					dataCurrentPath.setParameters(postParamsContent);
+					fillData(dataCurrentPath, listParams,currentPathName,swagger );
 					urlInfos.add(dataCurrentPath);
 				}
 
@@ -191,46 +166,21 @@ public class Api {
 				if (currentPath.getDelete() != null) {
 					dataCurrentPath = new UrlInfo();
 					dataCurrentPath.setOperationType(OperationType.DELETE.toString());
-					fillParamsMap(currentPath,dataCurrentPath);
-
-					dataCurrentPath.setCodes(paths.get(currentPathName).getGet().getResponses().keySet());
-					dataCurrentPath.setLink(swagger.getSchemes().get(0).toString().toLowerCase() + "://" + swagger.getHost() + swagger.getBasePath() + currentPathName);
-
-
-					if (!currentPath.getDelete().getParameters().isEmpty()) {
-						for (Parameter parameter : currentPath.getDelete().getParameters()) {
-							String linkBase = dataCurrentPath.getLink().replace("{" + parameter.getName() + "}", Tools.generateTestData(parameter));
-							dataCurrentPath.setLink(linkBase);
-						}
-					} 
+					List<Parameter> listParams = currentPath.getDelete().getParameters();
+					fillData(dataCurrentPath, listParams,currentPathName,swagger );
 					urlInfos.add(dataCurrentPath);
 				}
 
 				if (currentPath.getPut() != null) {
 					dataCurrentPath = new UrlInfo();
-
 					dataCurrentPath.setOperationType(OperationType.PUT.toString());
-					fillParamsMap(currentPath,dataCurrentPath);
-
 					dataCurrentPath.setCodes(paths.get(currentPathName).getPut().getResponses().keySet());
 
-					String linkBase = swagger.getSchemes().get(0).toString().toLowerCase() + "://" + swagger.getHost() + swagger.getBasePath() + currentPathName;
-
 					List<Parameter> listParams = currentPath.getPut().getParameters();
-					Map<String,String> params=new TreeMap<>();
-
-					for (Parameter param : listParams){
-						linkBase = linkBase.replace("{" + param.getName() + "}", Tools.generateTestData(param));
-						params.put(param.getName(),Tools.generateTestData(param));
-						logger.debug("PUT :  "+params.toString()+ " for path "+linkBase);
-					}
-
-					dataCurrentPath.setLink(linkBase);
-					dataCurrentPath.setParameters(params);
-					urlInfos.add(dataCurrentPath);
+					fillData(dataCurrentPath, listParams,currentPathName,swagger );
+					urlInfos.add(dataCurrentPath);					
 				}
-
-			}
+			} // foreach
 			data.setHostname(swagger.getHost());
 			data.setUrls(urlInfos);
 		} else {
@@ -275,7 +225,7 @@ public class Api {
 	 * @param currentPath :
 	 * @param dataCurrentPath
 	 */
-	public static void fillParamsMap(io.swagger.models.Path currentPath, UrlInfo dataCurrentPath) {
+	public static void fillParamsMap(UrlInfo dataCurrentPath,io.swagger.models.Path currentPath) {
 
 
 		List<Parameter> parameters;
@@ -312,29 +262,29 @@ public class Api {
 			switch (currentparaType) {
 
 			case "integer":
-				dataCurrentPath.getParameters().put(param.getName(),"integer");
+				dataCurrentPath.getParamNameAndType().put(param.getName(),"integer");
 				break;
 
 			case "number":
-				dataCurrentPath.getParameters().put(param.getName(),"float");
+				dataCurrentPath.getParamNameAndType().put(param.getName(),"float");
 				break;
 
 			case "boolean":
-				dataCurrentPath.getParameters().put(param.getName(),"boolean");
+				dataCurrentPath.getParamNameAndType().put(param.getName(),"boolean");
 				break;
 
 			case "string":
-				dataCurrentPath.getParameters().put(param.getName(),"string");
+				dataCurrentPath.getParamNameAndType().put(param.getName(),"string");
 				break;
 
 			case "body":
 				if(((BodyParameter) param).getSchema() !=null && ((BodyParameter) param).getSchema().getReference() != null)
 				{
-					dataCurrentPath.getParameters().put(param.getName(),((BodyParameter) param).getSchema().getReference().replace("#/definitions/", ""));
+					dataCurrentPath.getParamNameAndType().put(param.getName(),((BodyParameter) param).getSchema().getReference().replace("#/definitions/", ""));
 				}
 				else
 				{
-					dataCurrentPath.getParameters().put(param.getName(), "null");
+					dataCurrentPath.getParamNameAndType().put(param.getName(), "null");
 				}
 				break;
 
@@ -342,5 +292,32 @@ public class Api {
 				return;
 			}
 		}
+	}
+	
+	/**
+	 * Fill url info with generated data
+	 * @param urlInfo : 
+	 * @param listParam : list of parameters for the current operation type
+	 * @param currentPathName : name of the path to process
+	 * @param swagger
+	 */
+	void fillData(UrlInfo urlInfo, List<Parameter> listParam,String currentPathName,Swagger swagger)
+	{
+		io.swagger.models.Path path = swagger.getPaths().get(currentPathName);
+		Map<String,String> params=new TreeMap<>();
+
+		String linkBase = (swagger.getSchemes().get(0).toString().toLowerCase() + "://" + swagger.getHost() + swagger.getBasePath() + currentPathName);
+		
+		for (Parameter param : listParam){
+			linkBase = linkBase.replace("{" + param.getName() + "}", Tools.generateTestData(param));
+			if(param.getIn().equals("formData") || param.getIn().equals("body"))
+			{
+				params.put(param.getName(),Tools.generateTestData(param));
+			}
+		}
+		urlInfo.setLink(linkBase);
+		urlInfo.setParameters(params);
+		
+		fillParamsMap(urlInfo, path);
 	}
 }
