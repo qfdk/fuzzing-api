@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
 
 /**
@@ -225,13 +226,13 @@ public class Tools {
 			StringBuilder sb = new StringBuilder();
 			String line;
 			while ((line = reader.readLine()) != null) {
-				System.out.println(line);
+				logger.info(line);
 				sb.append(line);
 			}
 			return sb.toString();
 
 		} catch (IOException e) {
-			System.err.println("Something was wrong");
+			logger.error("Something was wrong");
 			return "ERROR";
 		}
 	}
@@ -280,7 +281,10 @@ public class Tools {
 				return randomString(10);
 
 			case "body":
-				// TODO
+				if (((BodyParameter) param).getSchema() != null &&  ((BodyParameter) param).getSchema().getReference() !=null)
+				return ((BodyParameter) param).getSchema().getReference();
+				else
+					return "{body}";
 
 			default:
 				return "DEFAULT";
@@ -307,4 +311,5 @@ public class Tools {
 
 		return String.valueOf((int) Math.random() * 20);
 	}
+
 }
