@@ -11,6 +11,10 @@ public class FuzzingData {
 
     private static FuzzingData instance = null;
 
+    /**
+     * get instance of fuzzing Data.
+     * @return instance of fuzzing
+     */
     static FuzzingData getInstance() {
         if (instance == null) {
             instance = new FuzzingData();
@@ -21,7 +25,11 @@ public class FuzzingData {
     private FuzzingData() {
     }
 
-    public String getHostname() {
+	/**
+	 * hostName
+	 * @return hostname
+	 */
+	public String getHostname() {
         return hostname;
     }
 
@@ -29,7 +37,11 @@ public class FuzzingData {
         this.hostname = hostname;
     }
 
-    public String getContentType() {
+	/**
+	 * ContentType
+	 * @return ContentType
+	 */
+	public String getContentType() {
         return contentType;
     }
 
@@ -37,20 +49,16 @@ public class FuzzingData {
         this.contentType = contentType;
     }
 
-    public List<UrlInfo> getUrlInfos() {
+	/**
+	 * Urlinfos
+	 * @return list of UrlInfo
+	 */
+	public List<UrlInfo> getUrlInfos() {
         return urls;
     }
 
     public void setUrls(List<UrlInfo> urls) {
         this.urls = urls;
-    }
-
-    public List<String> getUrls() {
-        List<String> result = new ArrayList<>();
-        for (UrlInfo path : urls) {
-            result.add(path.getLink());
-        }
-        return result;
     }
 
 }

@@ -6,8 +6,6 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
-
-import jdk.nashorn.internal.ir.ReturnNode;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -23,13 +21,9 @@ import io.swagger.models.parameters.Parameter;
  */
 public class Tools {
 
-	public enum type {Integer, String}
+	public enum type {Integer, String};
 
-	;
-
-	public enum OperationType {POST, GET, PUT, DELETE}
-
-	;
+	public enum OperationType {POST, GET, PUT, DELETE};
 
 	static Logger logger = LoggerFactory.getLogger(Tools.class);
 
@@ -73,7 +67,6 @@ public class Tools {
 			prop.storeToXML(fos, fileName);
 		} catch (IOException e) {
 			logger.error("saveConf IOException", e);
-
 		}
 		try {
 			fos.close();
@@ -308,7 +301,7 @@ public class Tools {
 	 */
 	private static String randomInteger(int max) {
 
-		return String.valueOf((int) Math.random() * 20);
+		return String.valueOf((int) (Math.random() * max));
 	}
 
 }
