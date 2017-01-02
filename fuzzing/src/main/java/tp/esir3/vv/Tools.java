@@ -6,6 +6,7 @@ import io.swagger.models.parameters.PathParameter;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -208,37 +209,24 @@ public class Tools {
 	 * send PUT request
 	 *
 	 * @param url url
-	 * @param map key value
+	 * @param json json
 	 * @return responseCode
 	 * @throws Exception e
 	 */
-	public static List<String> sendPut(String url, Map<String, String> map) throws Exception {
+	public static List<String> sendPut(String url, JSONObject json) throws Exception {
 
-		URL obj = new URL(url);
-		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-		//add reuqest header
-		con.setRequestMethod("PUT");
-		con.setRequestProperty("User-Agent", USER_AGENT);
-		con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-		con.setRequestProperty("Content-Type", "application/json; charset=utf8");
-
-		JSONObject data = new JSONObject(map);
-
-		// Send post request
-		con.setDoOutput(true);
-		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-		wr.writeBytes(data.toString());
-		wr.flush();
-		wr.close();
-		int responseCode = con.getResponseCode();
-		logger.debug("Sending 'PUT' request to URL : " + url);
-		logger.debug("Response Code : " + responseCode);
-		String body = printUrlContents(obj,"PUT");
-		List<String> list = new ArrayList<>();
-		list.add(String.valueOf(responseCode));
-		list.add(body);
-		return list;
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+        HttpPut request = new HttpPut(url);
+        StringEntity params = new StringEntity(json.toString());
+        request.addHeader("content-type", "application/json");
+        request.setEntity(params);
+        HttpResponse response=httpClient.execute(request);
+        logger.debug("\nSending 'PUT' request to URL : " + url);
+        logger.debug("Response Code : " + response.getStatusLine().getStatusCode());
+        List<String> list = new ArrayList<>();
+        list.add(String.valueOf(response.getStatusLine().getStatusCode()));
+        list.add(response.getStatusLine().getReasonPhrase());
+        return list;
 	}
 
 	/**

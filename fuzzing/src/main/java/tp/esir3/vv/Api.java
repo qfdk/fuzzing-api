@@ -88,7 +88,7 @@ public class Api {
 			}
 			if(url.getOperationType().equals(Tools.OperationType.PUT.toString()))
 			{
-				List<String> l = Tools.sendPut(url.getLink(),url.getParameters());
+				List<String> l = Tools.sendPut(url.getLink(),url.getPostParam());
 				url.setReponseCode(l.get(0));
 				url.setReponseBody(l.get(1));
 			}
