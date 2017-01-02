@@ -84,5 +84,4 @@ public class HttpTest {
         resp= Tools.sendPost("http://localhost:8080/api/v1/testPost",map);
         assertTrue(resp.get(1).equals(jsonObject.toString()));
     }
-
 }
