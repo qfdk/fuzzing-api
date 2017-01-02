@@ -123,7 +123,10 @@ public class Tools {
 		con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
         con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
 		con.setRequestProperty("Content-Type", "application/json; charset=utf8");
-
+		
+		con.setDoInput(true);
+		con.setDoOutput(true);
+		
         OutputStream os = con.getOutputStream();
         os.write(json.toString().getBytes("UTF-8"));
         os.close();
@@ -362,9 +365,9 @@ public class Tools {
 		}
 	}
 
-	public static String generatePostTestData(Parameter param) {
+	public static JSONObject generatePostTestData(Parameter param) {
 		JSONObject r = new JSONObject("{ \"id\": 0, \"category\": { \"id\": 0, \"name\": \"string\" }, \"name\": \"doggie\", \"photoUrls\": [ \"string\" ], \"tags\": [ { \"id\": 0, \"name\": \"string\" } ], \"status\": \"string\" }");
-		return r.toString(); 
+		return r; 
 	}
 
 

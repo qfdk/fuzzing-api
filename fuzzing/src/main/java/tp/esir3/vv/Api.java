@@ -70,27 +70,30 @@ public class Api {
 		for (UrlInfo url : urls) {
 			if(url.getOperationType().equals(Tools.OperationType.GET.toString()))
 			{
-				url.setReponseCode(Tools.sendGet(url.getLink()).get(0));
-				url.setReponseBody(Tools.sendGet(url.getLink()).get(1));
+				List<String> l = Tools.sendGet(url.getLink());
+				url.setReponseCode(l.get(0));
+				url.setReponseBody(l.get(1));
 			}
 			if(url.getOperationType().equals(Tools.OperationType.POST.toString()))
 			{
-				url.setReponseCode(Tools.sendPost(url.getLink(),url.getParameters()).get(0));
-				url.setReponseBody(Tools.sendPost(url.getLink(),url.getParameters()).get(1));
-
+				List<String> l = Tools.sendPost(url.getLink(),url.getPostParam());
+				url.setReponseCode(l.get(0));
+				url.setReponseBody(l.get(1));
 			}
 			if(url.getOperationType().equals(Tools.OperationType.DELETE.toString()))
 			{
-				url.setReponseCode(Tools.sendDel(url.getLink()).get(0));
-				url.setReponseBody(Tools.sendDel(url.getLink()).get(1));
+				List<String> l = Tools.sendDel(url.getLink());
+				url.setReponseCode(l.get(0));
+				url.setReponseBody(l.get(1));
 			}
 			if(url.getOperationType().equals(Tools.OperationType.PUT.toString()))
 			{
-				url.setReponseCode(Tools.sendPut(url.getLink(),url.getParameters()).get(0));
-				url.setReponseBody(Tools.sendPut(url.getLink(),url.getParameters()).get(1));
+				List<String> l = Tools.sendPut(url.getLink(),url.getParameters());
+				url.setReponseCode(l.get(0));
+				url.setReponseBody(l.get(1));
 			}
 
-			if(url.getCodes().contains("default"))
+			if(url.getCodes().contains("default") || url.getCodes().isEmpty())
 			{
 				url.setValided(true);
 			}
@@ -328,7 +331,7 @@ public class Api {
 			}
 			else if("body".equals(param.getIn()))
 			{
-				params.put(param.getName(),Tools.generateTestData(param));
+				dataCurrentPath.setPostParam(Tools.generatePostTestData(param));
 			}
 		}
 		dataCurrentPath.setLink(linkBase);

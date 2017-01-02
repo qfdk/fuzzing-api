@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.json.JSONObject;
+
 
 /**
  * @author maiga
@@ -19,7 +21,7 @@ public class UrlInfo {
 	private String operationType;
 	private Map<String, String> params;
 	private Map<String, String> paramNameAndType; //  A Map with parameter as key and type as value
-
+	private JSONObject postParam;
 	private String reponseBody;
 
 	/**
@@ -32,6 +34,7 @@ public class UrlInfo {
 		this.reponseCode = "FFF";
 		this.params = new TreeMap<>();
 		this.paramNameAndType = new HashMap<>();
+		this.postParam = new JSONObject();
 	}
 
 	/**
@@ -125,6 +128,20 @@ public class UrlInfo {
 	 */
 	public void setParamNameAndType(Map<String, String> paramNameAndType) {
 		this.paramNameAndType = paramNameAndType;
+	}
+
+	/**
+	 * @return the postParam
+	 */
+	public JSONObject getPostParam() {
+		return postParam;
+	}
+
+	/**
+	 * @param postParam the postParam to set
+	 */
+	public void setPostParam(JSONObject postParam) {
+		this.postParam = postParam;
 	}
 }
 
