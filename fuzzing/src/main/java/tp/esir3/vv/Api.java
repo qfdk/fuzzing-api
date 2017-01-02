@@ -139,10 +139,10 @@ public class Api {
 				if (currentPath.getGet() != null) {
 					dataCurrentPath.setOperationType(Tools.OperationType.GET.toString());
 					dataCurrentPath.setCodes(paths.get(currentPathName).getGet().getResponses().keySet());
-			
+
 					List<Parameter> listParams = currentPath.getGet().getParameters();
 					fillData(dataCurrentPath,listParams,currentPathName,swagger );
-					
+
 					urlInfos.add(dataCurrentPath);
 				}
 
@@ -151,7 +151,7 @@ public class Api {
 					dataCurrentPath.setOperationType(Tools.OperationType.POST.toString());
 
 					List<Parameter> listParams = currentPath.getPost().getParameters();
-					fillData(dataCurrentPath, listParams,currentPathName,swagger );
+					fillDataPost(dataCurrentPath, listParams,currentPathName,swagger );
 					urlInfos.add(dataCurrentPath);
 				}
 
@@ -285,7 +285,7 @@ public class Api {
 			}
 		}
 	}
-	
+
 	/**
 	 * Fill url info with generated data
 	 * @param urlInfo : 
@@ -299,7 +299,7 @@ public class Api {
 		Map<String,String> params=new TreeMap<>();
 
 		String linkBase = (swagger.getSchemes().get(0).toString().toLowerCase() + "://" + swagger.getHost() + swagger.getBasePath() + currentPathName);
-		
+
 		for (Parameter param : listParam){
 			linkBase = linkBase.replace("{" + param.getName() + "}", Tools.generateTestData(param));
 			if(param.getIn().equals("formData") || param.getIn().equals("body"))
@@ -309,7 +309,31 @@ public class Api {
 		}
 		urlInfo.setLink(linkBase);
 		urlInfo.setParameters(params);
-		
+
 		fillParamsMap(urlInfo, path);
+	}
+
+	private void fillDataPost(UrlInfo dataCurrentPath, List<Parameter> listParam, String currentPathName,
+			Swagger swagger) {
+		io.swagger.models.Path path = swagger.getPaths().get(currentPathName);
+		Map<String,String> params=new TreeMap<>();
+
+		String linkBase = (swagger.getSchemes().get(0).toString().toLowerCase() + "://" + swagger.getHost() + swagger.getBasePath() + currentPathName);
+
+		for (Parameter param : listParam){
+			linkBase = linkBase.replace("{" + param.getName() + "}", "1");
+			if("formData".equals(param.getIn()))
+			{
+				params.put(param.getName(),Tools.generateTestData(param));
+			}
+			else if("body".equals(param.getIn()))
+			{
+				params.put(param.getName(),Tools.generateTestData(param));
+			}
+		}
+		dataCurrentPath.setLink(linkBase);
+		dataCurrentPath.setParameters(params);
+
+		fillParamsMap(dataCurrentPath, path);	
 	}
 }

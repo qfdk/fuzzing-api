@@ -284,41 +284,6 @@ public class Tools {
 		return buf.toString();
 	}
 
-	/**
-	 * generate Test
-	 *
-	 * @return text
-	 */
-	public static String generateTestData(Parameter param) {
-
-		if (param instanceof io.swagger.models.parameters.PathParameter) {
-			String type = ((io.swagger.models.parameters.PathParameter) param).getType();
-
-			switch (type) {
-
-			case "integer":
-			case "number":
-				return randomInteger(100);
-
-			case "boolean":
-				return randomBoolean();
-
-			case "string":
-				return randomString(10);
-
-			default:
-				return "DEFAULT";
-
-			}
-		}else if (param instanceof io.swagger.models.parameters.BodyParameter) {
-			if (((BodyParameter) param).getSchema() != null &&  ((BodyParameter) param).getSchema().getReference() !=null)
-				return ((BodyParameter) param).getSchema().getReference();
-			else
-				return "{body}";
-		}else{
-			return "DEFAULT";
-		}
-	}
 
 	/**
 	 * generate boolean
@@ -340,5 +305,67 @@ public class Tools {
 
 		return String.valueOf((int) (Math.random() * max));
 	}
+	
+
+	/**
+	 * generate Test
+	 *
+	 * @return text
+	 */
+	public static String generateTestData(Parameter param) {
+
+		String generatedData = "";
+		if (param instanceof io.swagger.models.parameters.PathParameter) 
+		{
+			String type = ((io.swagger.models.parameters.PathParameter) param).getType();
+
+			switch (type) {
+
+			case "integer":
+			case "number":
+				generatedData =  randomInteger(100);
+				break;
+
+			case "boolean":
+				generatedData = randomBoolean();
+				break;
+
+			case "string":
+				generatedData =  randomString(10);
+				break;
+			}
+		} else if (param instanceof io.swagger.models.parameters.BodyParameter) {
+			generatedData = generateBodyParameter((BodyParameter)param);
+		}
+		return generatedData;
+	}
+
+	private static String generateBodyParameter(BodyParameter param) {
+
+		if (param.getSchema() != null &&  param.getSchema().getReference() !=null)
+		{
+			String type = param.getSchema().getReference().replace("#/definitions/", "");
+
+			switch (type) {
+			case "Pet":
+				JSONObject r = new JSONObject("{ \"id\": 0, \"category\": { \"id\": 0, \"name\": \"string\" }, \"name\": \"doggie\", \"photoUrls\": [ \"string\" ], \"tags\": [ { \"id\": 0, \"name\": \"string\" } ], \"status\": \"string\" }");
+				return r.toString();
+
+			default:
+				break;
+			}
+			return "default";
+		}
+		else
+		{
+			return new JSONObject().put("body", "default").toString();
+		}
+	}
+
+	public static String generatePostTestData(Parameter param) {
+		JSONObject r = new JSONObject("{ \"id\": 0, \"category\": { \"id\": 0, \"name\": \"string\" }, \"name\": \"doggie\", \"photoUrls\": [ \"string\" ], \"tags\": [ { \"id\": 0, \"name\": \"string\" } ], \"status\": \"string\" }");
+		return r.toString(); 
+	}
+
 
 }
