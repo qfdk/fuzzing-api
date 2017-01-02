@@ -3,83 +3,71 @@
  */
 package fuzzing;
 
-import tp.esir3.vv.Tools;
-import org.json.JSONObject;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import static org.junit.Assert.assertTrue;
+import io.swagger.models.parameters.PathParameter;
+import tp.esir3.vv.Tools;
 
 /**
  * @author qfdk,Maiga
  */
 public class ToolsTest {
 
-	@Test
-	public void veryComplexTest() {
-		assertTrue(true);
-	}
 
+	/**
+	 * Should not generate always integer 
+	 */
 	@Test
-	public void testSendGet1() throws Exception {
-		String res = Tools.sendGet("http://localhost:8080/en").get(0);
-		assertTrue(res.equals("404"));
-	}
+	public void testRandomInteger(){
 
-	@Test
-	public void testSendGet2() throws Exception {
-		String res = Tools.sendGet("http://localhost:8080/").get(0);
-		assertTrue(res.equals("200"));
-	}
+		io.swagger.models.parameters.PathParameter pp = new PathParameter();
+		pp.setType("integer");
 
-	@Test
-	public void testSendGet3() throws Exception {
-		String ret = Tools.sendGet("http://localhost:8080/api/v1/").get(0);
-		System.out.println(ret);
-		assertTrue(ret.equals("405"));
-	}
+		boolean ret = false;
 
-	@Test
-	public void testSendGet4() throws Exception {
-		String url = "http://localhost:8080/api/v1/getStatus";
-		String ret = Tools.sendGet(url).get(0);
-		assertTrue(ret.equals("200")&&"{status:ok,msg:api works!}".equals(Tools.sendGet(url).get(1)));
-	}
-
-	@Test
-	public void testSendGet5() throws Exception {
-		List<String> codes = new ArrayList<>();
-		codes.add("200");
-		codes.add("400");
-		codes.add("404");
-		codes.add("405");
-
-		List<String> resp = new ArrayList<>();
-		for (String code : codes) {
-			String tmp = Tools.sendGet("http://localhost:8080/api/v1/testCode?code=" + code).get(0);
-			resp.add(tmp);
+		try { 
+			Integer.parseInt(Tools.generateTestData(pp)); 
+			ret = true;
+		} catch(NumberFormatException e) { 
+			e.printStackTrace();
+			ret = false; 
+		} catch(NullPointerException e) {
+			e.printStackTrace();
+			ret =  false;
 		}
-		assertTrue(codes.equals(resp));
+		finally {
+			assertTrue(ret);
+		}
 	}
 
-
+	/**
+	 * Should not generate always same data 
+	 */
 	@Test
-	public void testSendPost1() throws Exception {
-		JSONObject jsonObject=new JSONObject();
-		jsonObject.put("name","coucou");
-		jsonObject.put("age","20");
+	public void testRandomString(){
 
-		Map<String,String> map=new TreeMap<>();
-		map.put("name","coucou");
-		map.put("age","20");
-
-		List<String> resp = new ArrayList<>();
-		resp= Tools.sendPost("http://localhost:8080/api/v1/testPost",map);
-		System.out.print(resp);
-		assertTrue(resp.get(0).equals("200"));
+		io.swagger.models.parameters.PathParameter pp = new PathParameter();
+		
+		pp.setType("string");
+		String s1 = Tools.generateTestData(pp);
+		String s2 = Tools.generateTestData(pp);
+		
+		assertTrue("not always same date generated, case string", !s1.equals(s2));
+		
+		pp.setType("integer");
+		s1  = Tools.generateTestData(pp);
+		s2  = Tools.generateTestData(pp);
+		
+		assertTrue("not always data generated, case integer", !s1.equals(s2));
+		
+		pp.setType("number");
+		s1  = Tools.generateTestData(pp);
+		s2  = Tools.generateTestData(pp);
+		
+		assertTrue("not always data generated, case number", !s1.equals(s2));
+		
 	}
+
 }
