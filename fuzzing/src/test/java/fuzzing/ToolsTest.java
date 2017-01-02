@@ -1,12 +1,7 @@
 package fuzzing;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import io.swagger.models.parameters.PathParameter;
