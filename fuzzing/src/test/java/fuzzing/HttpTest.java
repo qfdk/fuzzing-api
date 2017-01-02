@@ -57,7 +57,6 @@ public class HttpTest {
         assertTrue(codes.equals(resp));
     }
 
-
     @Test
     public void testSendPost1() throws Exception {
         JSONObject jsonObject=new JSONObject();
@@ -67,10 +66,23 @@ public class HttpTest {
         Map<String,String> map=new TreeMap<>();
         map.put("name","coucou");
         map.put("age","20");
-
         List<String> resp = new ArrayList<>();
         resp= Tools.sendPost("http://localhost:8080/api/v1/testPost",map);
+        assertTrue(resp.get(0).equals("200"));
+    }
 
+    @Test
+    public void testSendPost2() throws Exception {
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.put("name","coucou");
+        jsonObject.put("age","20");
+
+        Map<String,String> map=new TreeMap<>();
+        map.put("name","coucou");
+        map.put("age","20");
+        List<String> resp = new ArrayList<>();
+        resp= Tools.sendPost("http://localhost:8080/api/v1/testPost",map);
         assertTrue(resp.get(1).equals(jsonObject.toString()));
     }
+
 }

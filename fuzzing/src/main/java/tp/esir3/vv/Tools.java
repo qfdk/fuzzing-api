@@ -1,31 +1,33 @@
 package tp.esir3.vv;
 
-import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
+import io.swagger.models.parameters.BodyParameter;
+import io.swagger.models.parameters.Parameter;
+import io.swagger.models.parameters.PathParameter;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import io.swagger.models.parameters.BodyParameter;
-import io.swagger.models.parameters.Parameter;
-import io.swagger.models.parameters.PathParameter;
+import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
 
 /**
  * Created by qfdk on 2016/11/16.
  */
 public class Tools {
 
-	public enum type {Integer, String};
+	public static enum type {Integer, String};
 
-	public enum OperationType {POST, GET, PUT, DELETE};
+	public static enum OperationType {POST, GET, PUT, DELETE};
 
 	static Logger logger = LoggerFactory.getLogger(Tools.class);
 
@@ -115,30 +117,15 @@ public class Tools {
 	 * @throws Exception
 	 */
 	public static List<String> sendPost(String url, JSONObject json) throws Exception {
-
-		URL obj = new URL(url);
-		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-		//add reuqest header
-		con.setRequestMethod("POST");
-		con.setRequestProperty("User-Agent", USER_AGENT);
-		con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-		con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-		con.setRequestProperty("Content-Type", "application/json; charset=utf8");
-
-		con.setDoInput(true);
-		con.setDoOutput(true);
-
-		OutputStream os = con.getOutputStream();
-		os.write(json.toString().getBytes("UTF-8"));
-		os.close();
-
-		int responseCode = con.getResponseCode();
-		logger.debug("Sending 'POST' request to URL : " + url);
-		logger.debug("Response Code : " + responseCode);
-		String body = printUrlContents(obj,"POST");
-		List<String> list = new ArrayList<>();
-		list.add(String.valueOf(responseCode));
-		list.add(body);
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+        HttpPost request = new HttpPost(url);
+        StringEntity params = new StringEntity(json.toString());
+        request.addHeader("content-type", "application/json");
+        request.setEntity(params);
+        HttpResponse response=httpClient.execute(request);
+        List<String> list = new ArrayList<>();
+		list.add(String.valueOf(response.getStatusLine().getStatusCode()));
+		list.add(response.getStatusLine().getReasonPhrase());
 		return list;
 	}
 
@@ -181,11 +168,20 @@ public class Tools {
 		int responseCode = con.getResponseCode();
 		logger.debug("Sending 'POST' request to URL : " + url);
 		logger.debug("Response Code : " + responseCode);
-		String body = printUrlContents(obj,"POST");
+
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuilder ss = new StringBuilder();
+
+        while ((inputLine = in.readLine()) != null) {
+            ss.append(inputLine);
+        }
+        in.close();
 
 		List<String> list = new ArrayList<>();
 		list.add(String.valueOf(responseCode));
-		list.add(body);
+		list.add(ss.toString());
 		return list;
 	}
 	/**
@@ -196,7 +192,7 @@ public class Tools {
 	 * @throws Exception e
 	 */
 	public static List<String> sendDel(String url) throws Exception {
-		DefaultHttpClient httpClient = new DefaultHttpClient();
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 		HttpResponse response = httpClient.execute(new HttpDelete(url));
 		int responseCode = response.getStatusLine().getStatusCode();
 		logger.debug("\nSending 'Delete' request to URL : " + url);
