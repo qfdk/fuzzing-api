@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.fluent.Request;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
@@ -30,7 +31,7 @@ public class Tools {
 	// HTTP GET request
 	public static List<String> sendGet(String url) throws Exception {
 		URL obj = new URL(url);
-		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		// optional default is GET
 		con.setRequestMethod("GET");
 		//add request header
@@ -38,7 +39,7 @@ public class Tools {
 		int responseCode = con.getResponseCode();
 		logger.debug("Sending 'GET' request to URL : " + url);
 		logger.debug("Response Code : " + responseCode);
-		String body = printUrlContents(obj);
+		String body = printUrlContents(obj,"GET");
 		List<String> list = new ArrayList<>();
 		list.add(String.valueOf(responseCode));
 		list.add(body);
@@ -116,14 +117,13 @@ public class Tools {
 
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
 		//add reuqest header
 		con.setRequestMethod("POST");
 		con.setRequestProperty("User-Agent", USER_AGENT);
 		con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
 		con.setRequestProperty("Content-Type", "application/json; charset=utf8");
-		StringBuilder sb = new StringBuilder();
 
+		StringBuilder sb = new StringBuilder();
 		for (String s : map.keySet()) {
 			sb.append(s).append("=").append(map.get(s)).append("&");
 		}
@@ -142,10 +142,20 @@ public class Tools {
 		int responseCode = con.getResponseCode();
 		logger.debug("Sending 'POST' request to URL : " + url);
 		logger.debug("Response Code : " + responseCode);
-		String body = printUrlContents(obj);
+//		String body = printUrlContents(obj,"POST");
+
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuilder ss = new StringBuilder();
+
+        while ((inputLine = in.readLine()) != null) {
+            ss.append(inputLine);
+        }
+        in.close();
 		List<String> list = new ArrayList<>();
 		list.add(String.valueOf(responseCode));
-		list.add(body);
+		list.add(ss.toString());
 		return list;
 	}
 
@@ -162,7 +172,7 @@ public class Tools {
 		int responseCode = response.getStatusLine().getStatusCode();
 		logger.debug("\nSending 'Delete' request to URL : " + url);
 		logger.debug("Response Code : " + responseCode);
-		String body = printUrlContents(new URL(url));
+		String body = printUrlContents(new URL(url),"DELETE");
 		List<String> list = new ArrayList<>();
 		list.add(String.valueOf(responseCode));
 		list.add(body);
@@ -199,7 +209,7 @@ public class Tools {
 		int responseCode = con.getResponseCode();
 		logger.debug("Sending 'PUT' request to URL : " + url);
 		logger.debug("Response Code : " + responseCode);
-		String body = printUrlContents(obj);
+		String body = printUrlContents(obj,"PUT");
 		List<String> list = new ArrayList<>();
 		list.add(String.valueOf(responseCode));
 		list.add(body);
@@ -212,22 +222,24 @@ public class Tools {
 	 * @param url url
 	 * @throws IOException
 	 */
-	private static String printUrlContents(URL url) {
+	private static String printUrlContents(URL url,String type) {
 		try {
-			InputStream stream = url.openStream();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-			StringBuilder sb = new StringBuilder();
-			String line;
-			while ((line = reader.readLine()) != null) {
-				logger.info(line);
-				sb.append(line);
-			}
-			return sb.toString();
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod(type);
 
-		} catch (IOException e) {
-			logger.error("Something was wrong");
-			return "ERROR";
-		}
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuilder ss = new StringBuilder();
+            while ((inputLine = in.readLine()) != null) {
+                ss.append(inputLine);
+            }
+            in.close();
+            return ss.toString();
+        }catch (Exception e)
+        {
+            return "Something was wrong!";
+        }
 	}
 
 	/**

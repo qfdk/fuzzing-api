@@ -3,10 +3,14 @@
  */
 package fuzzing;
 
-import tp.esir3.vv.Tools;
 import org.json.JSONObject;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import tp.esir3.vv.Tools;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,12 +21,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author qfdk,Maiga
  */
-public class ToolsTest {
-
-	@Test
-	public void veryComplexTest() {
-		assertTrue(true);
-	}
+public class ToolsTest  {
 
 	@Test
 	public void testSendGet1() throws Exception {
@@ -79,7 +78,7 @@ public class ToolsTest {
 
 		List<String> resp = new ArrayList<>();
 		resp= Tools.sendPost("http://localhost:8080/api/v1/testPost",map);
-		System.out.print(resp);
-		assertTrue(resp.get(0).equals("200"));
+
+		assertTrue(resp.get(1).equals(jsonObject.toString()));
 	}
 }

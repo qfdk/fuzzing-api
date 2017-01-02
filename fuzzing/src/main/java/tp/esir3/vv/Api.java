@@ -202,7 +202,6 @@ public class Api {
 		JSONObject jsonObject=new JSONObject();
 		jsonObject.put("name",name);
 		jsonObject.put("age",age);
-		System.out.println(jsonObject);
 		return Response.status(200).entity(jsonObject.toString()).build();
 	}
 
