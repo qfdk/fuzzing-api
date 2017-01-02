@@ -65,20 +65,23 @@ public class Tools {
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(fileName);
+
+			prop.storeToXML(fos, fileName);
+
 		} catch (FileNotFoundException e) {
 			logger.error("saveConf FileNotFoundException", e);
-		}
-		try {
-			prop.storeToXML(fos, fileName);
 		} catch (IOException e) {
 			logger.error("saveConf IOException", e);
 		}
-		try {
-			fos.close();
-		} catch (IOException e) {
-			logger.error("saveConf IOException", e);
+		finally {
+			try {
+				fos.close();
+			} catch (IOException e) {
+				logger.error("saveConf IOException", e);
+			}
 		}
 	}
+
 
 	/**
 	 * Read Configuration
@@ -88,22 +91,22 @@ public class Tools {
 	 */
 
 	public static Properties readConf(String fileName) {
+		Properties prop = null;
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(fileName);
+			prop = new Properties();
+			prop.loadFromXML(fis);
 		} catch (FileNotFoundException e) {
 			logger.error("readConf FileNotFoundException", e);
-		}
-		Properties prop = new Properties();
-		try {
-			prop.loadFromXML(fis);
-		} catch (IOException e) {
+		}catch (IOException e) {
 			logger.error("readConf IOException", e);
-		}
-		try {
-			fis.close();
-		} catch (IOException e) {
-			logger.error("readConf IOException", e);
+		}finally {
+			try {
+				fis.close();
+			} catch (IOException e) {
+				logger.error("readConf IOException", e);
+			}
 		}
 		return prop;
 	}
@@ -118,15 +121,15 @@ public class Tools {
 	 * @throws Exception
 	 */
 	public static List<String> sendPost(String url, JSONObject json) throws Exception {
-        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-        HttpPost request = new HttpPost(url);
-        StringEntity params = new StringEntity(json.toString());
-        request.addHeader("content-type", "application/json");
-        request.setEntity(params);
-        HttpResponse response=httpClient.execute(request);
-        logger.debug("\nSending 'POST' request to URL : " + url);
-        logger.debug("Response Code : " + response.getStatusLine().getStatusCode());
-        List<String> list = new ArrayList<>();
+		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+		HttpPost request = new HttpPost(url);
+		StringEntity params = new StringEntity(json.toString());
+		request.addHeader("content-type", "application/json");
+		request.setEntity(params);
+		HttpResponse response=httpClient.execute(request);
+		logger.debug("\nSending 'POST' request to URL : " + url);
+		logger.debug("Response Code : " + response.getStatusLine().getStatusCode());
+		List<String> list = new ArrayList<>();
 		list.add(String.valueOf(response.getStatusLine().getStatusCode()));
 		list.add(response.getStatusLine().getReasonPhrase());
 		return list;
@@ -172,15 +175,15 @@ public class Tools {
 		logger.debug("Sending 'POST' request to URL : " + url);
 		logger.debug("Response Code : " + responseCode);
 
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(con.getInputStream()));
-        String inputLine;
-        StringBuilder ss = new StringBuilder();
+		BufferedReader in = new BufferedReader(
+				new InputStreamReader(con.getInputStream()));
+		String inputLine;
+		StringBuilder ss = new StringBuilder();
 
-        while ((inputLine = in.readLine()) != null) {
-            ss.append(inputLine);
-        }
-        in.close();
+		while ((inputLine = in.readLine()) != null) {
+			ss.append(inputLine);
+		}
+		in.close();
 
 		List<String> list = new ArrayList<>();
 		list.add(String.valueOf(responseCode));
@@ -195,7 +198,7 @@ public class Tools {
 	 * @throws Exception e
 	 */
 	public static List<String> sendDel(String url) throws Exception {
-        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 		HttpResponse response = httpClient.execute(new HttpDelete(url));
 		logger.debug("\nSending 'Delete' request to URL : " + url);
 		logger.debug("Response Code : " + response.getStatusLine().getStatusCode());
@@ -215,18 +218,18 @@ public class Tools {
 	 */
 	public static List<String> sendPut(String url, JSONObject json) throws Exception {
 
-        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-        HttpPut request = new HttpPut(url);
-        StringEntity params = new StringEntity(json.toString());
-        request.addHeader("content-type", "application/json");
-        request.setEntity(params);
-        HttpResponse response=httpClient.execute(request);
-        logger.debug("\nSending 'PUT' request to URL : " + url);
-        logger.debug("Response Code : " + response.getStatusLine().getStatusCode());
-        List<String> list = new ArrayList<>();
-        list.add(String.valueOf(response.getStatusLine().getStatusCode()));
-        list.add(response.getStatusLine().getReasonPhrase());
-        return list;
+		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+		HttpPut request = new HttpPut(url);
+		StringEntity params = new StringEntity(json.toString());
+		request.addHeader("content-type", "application/json");
+		request.setEntity(params);
+		HttpResponse response=httpClient.execute(request);
+		logger.debug("\nSending 'PUT' request to URL : " + url);
+		logger.debug("Response Code : " + response.getStatusLine().getStatusCode());
+		List<String> list = new ArrayList<>();
+		list.add(String.valueOf(response.getStatusLine().getStatusCode()));
+		list.add(response.getStatusLine().getReasonPhrase());
+		return list;
 	}
 
 	/**
@@ -357,7 +360,8 @@ public class Tools {
 		{
 			type = ((PathParameter) param).getType();
 		}
-		JSONObject r = new JSONObject();
+		JSONObject r = new JSONObject().put(param.getName(), "default");
+
 
 		if(type!=null)
 		{
