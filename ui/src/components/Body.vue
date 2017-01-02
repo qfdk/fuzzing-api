@@ -21,7 +21,8 @@
     <div class="jumbotron" style="background-color: #fff9f0;">
       <p v-show="init_info" class="alert alert-info text-center">Please enter a <strong>swagger.json</strong> path then click go!</p>
       <accordion :one-at-atime="checked" :type="selected">
-        <panel v-for="(res,index) in results" v-bind:type="[res.valided ? 'success':'danger']" >
+       <!-- <panel v-for="(res,index) in results" v-bind:type="[res.valided ? 'success':'danger']" >-->
+       <panel v-for="(res,index) in results" v-bind:type="[res.color]">
           <h5 slot="header">
             <strong># {{ index+1 }}</strong> {{res.operationType}} {{res.link}}
           </h5>

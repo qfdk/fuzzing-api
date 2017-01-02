@@ -23,6 +23,7 @@ public class UrlInfo {
 	private Map<String, String> paramNameAndType; //  A Map with parameter as key and type as value
 	private JSONObject postParam;
 	private String reponseBody;
+	private String color;
 
 	/**
 	 * Info of un url
@@ -35,6 +36,7 @@ public class UrlInfo {
 		this.params = new TreeMap<>();
 		this.paramNameAndType = new HashMap<>();
 		this.postParam = new JSONObject();
+		this.setColor("danger");
 	}
 
 	/**
@@ -143,5 +145,13 @@ public class UrlInfo {
 	public void setPostParam(JSONObject postParam) {
 		this.postParam = postParam;
 	}
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
 }
 

@@ -1,4 +1,5 @@
 package tp.esir3.vv;
+
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
@@ -22,321 +23,316 @@ import java.util.TreeMap;
 @Path("v1")
 public class Api {
 
-	private FuzzingData data;
-	private String base_url = Tools.readConf("conf/conf.xml").getProperty("base_url");
+    private FuzzingData data;
+    private String base_url = Tools.readConf("conf/conf.xml").getProperty("base_url");
 
-	private static Logger logger = LoggerFactory.getLogger(Api.class);
-
-
-	public Api() {
-		data = FuzzingData.getInstance();
-		logger.info("[+] Fuzzing api init...");
-	}
-
-	/**
-	 * http://localhost:8080/api/v1/getStatus
-	 *
-	 * @return
-	 * @throws Exception
-	 */
-	@GET
-	@Path("getStatus")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getStatus() throws Exception {
-		return Response.status(200).entity("{status:ok,msg:api works!}").build();
-	}
-
-	/**
-	 * http://localhost:8080/api/v1/analyse
-	 *
-	 * @return
-	 * @throws Exception
-	 */
-	@GET
-	@Path("analyse")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response analyse() throws Exception {
-
-		List<UrlInfo> urls = data.getUrlInfos();
-
-		String hostname = data.getHostname();
-		String contentType = data.getContentType();
-
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("hostname", hostname);
-		jsonObject.put("contentType", contentType);
-
-		// add del chang post put ..
-		for (UrlInfo url : urls) {
-			if(url.getOperationType().equals(Tools.OperationType.GET.toString()))
-			{
-				List<String> l = Tools.sendGet(url.getLink());
-				url.setReponseCode(l.get(0));
-				url.setReponseBody(l.get(1));
-			}
-			if(url.getOperationType().equals(Tools.OperationType.POST.toString()))
-			{
-				List<String> l = Tools.sendPost(url.getLink(),url.getPostParam());
-				url.setReponseCode(l.get(0));
-				url.setReponseBody(l.get(1));
-			}
-			if(url.getOperationType().equals(Tools.OperationType.DELETE.toString()))
-			{
-				List<String> l = Tools.sendDel(url.getLink());
-				url.setReponseCode(l.get(0));
-				url.setReponseBody(l.get(1));
-			}
-			if(url.getOperationType().equals(Tools.OperationType.PUT.toString()))
-			{
-				List<String> l = Tools.sendPut(url.getLink(),url.getPostParam());
-				url.setReponseCode(l.get(0));
-				url.setReponseBody(l.get(1));
-			}
-
-			if(url.getCodes().contains("default") || url.getCodes().isEmpty())
-			{
-				url.setValided(true);
-			}
-		}
-
-		jsonObject.put("urls", urls);
-
-		logger.info("Result analyse + \n\t"+jsonObject);
-
-		return Response.status(200).entity(jsonObject.toString()).build();
-	}
-
-	@GET
-	@Path("saveConf")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response saveConf(@QueryParam("path") String path) throws Exception {
-		Map<String, String> map = new TreeMap<>();
-		map.put("base_url", "http://localhost:8080");
-		Tools.saveConf(map, path);
-		JSONObject ret = new JSONObject();
-		ret.put("msg", Tools.readConf(path).getProperty("base_url"));
-		return Response.status(200).entity(ret.toString()).build();
-	}
-
-	/**
-	 * http://localhost:8080/api/v1/getPath
-	 *
-	 * @throws Exception
-	 */
-	@GET
-	@Path("getPath")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getPath(@QueryParam("url") String url) throws Exception {
-		Swagger swagger = new SwaggerParser().read(url);
-		List<UrlInfo> urlInfos = new ArrayList<>();
-
-		if (swagger != null) {
-			Map<String, io.swagger.models.Path> paths = swagger.getPaths();
-
-			for (String currentPathName : paths.keySet()) {
-				io.swagger.models.Path currentPath = paths.get(currentPathName);
-				logger.debug("getPath : current path ==>"+currentPathName);
-
-				UrlInfo dataCurrentPath = new UrlInfo(); 
-
-				if (currentPath.getGet() != null) {
-					dataCurrentPath.setOperationType(Tools.OperationType.GET.toString());
-					dataCurrentPath.setCodes(paths.get(currentPathName).getGet().getResponses().keySet());
-
-					List<Parameter> listParams = currentPath.getGet().getParameters();
-					fillData(dataCurrentPath,listParams,currentPathName,swagger );
-
-					urlInfos.add(dataCurrentPath);
-				}
-
-				if (currentPath.getPost() != null) {
-					dataCurrentPath = new UrlInfo();
-					dataCurrentPath.setOperationType(Tools.OperationType.POST.toString());
-
-					List<Parameter> listParams = currentPath.getPost().getParameters();
-					fillDataPost(dataCurrentPath, listParams,currentPathName,swagger );
-					urlInfos.add(dataCurrentPath);
-				}
+    private static Logger logger = LoggerFactory.getLogger(Api.class);
 
 
-				if (currentPath.getDelete() != null) {
-					dataCurrentPath = new UrlInfo();
-					dataCurrentPath.setOperationType(Tools.OperationType.DELETE.toString());
-					List<Parameter> listParams = currentPath.getDelete().getParameters();
-					fillData(dataCurrentPath, listParams,currentPathName,swagger );
-					urlInfos.add(dataCurrentPath);
-				}
+    public Api() {
+        data = FuzzingData.getInstance();
+        logger.info("[+] Fuzzing api init...");
+    }
 
-				if (currentPath.getPut() != null) {
-					dataCurrentPath = new UrlInfo();
-					dataCurrentPath.setOperationType(Tools.OperationType.PUT.toString());
-					dataCurrentPath.setCodes(paths.get(currentPathName).getPut().getResponses().keySet());
+    /**
+     * http://localhost:8080/api/v1/getStatus
+     *
+     * @return
+     * @throws Exception
+     */
+    @GET
+    @Path("getStatus")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getStatus() throws Exception {
+        return Response.status(200).entity("{status:ok,msg:api works!}").build();
+    }
 
-					List<Parameter> listParams = currentPath.getPut().getParameters();
-					fillData(dataCurrentPath, listParams,currentPathName,swagger );
-					urlInfos.add(dataCurrentPath);					
-				}
-			} // foreach
-			data.setHostname(swagger.getHost());
-			data.setUrls(urlInfos);
-		} else {
-			JSONObject ret = new JSONObject();
-			ret.put("msg", "SWAGGER FILE IS INVALID");
-			return Response.status(200).entity(ret.toString()).build();
-		}
-		logger.debug("getPath result : \n"+ urlInfos);
-		logger.info("END of getPath :  "+urlInfos.size()+ " url send to analyse function");
-		return Response.temporaryRedirect(new URI(this.base_url + "/api/v1/analyse")).build();
-	}
+    /**
+     * http://localhost:8080/api/v1/analyse
+     *
+     * @return
+     * @throws Exception
+     */
+    @GET
+    @Path("analyse")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response analyse() throws Exception {
 
-	@GET
-	@Path("testCode")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response testReponseCode(@QueryParam("code") String code) throws Exception {
-		JSONObject jsonObject=new JSONObject();
-		jsonObject.put("code",code);
-		return Response.status(Integer.parseInt(code)).entity(jsonObject.toString()).build();
-	}
+        List<UrlInfo> urls = data.getUrlInfos();
 
-	@POST
-	@Path("testPost")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response testPost(@FormParam("name") String name,@FormParam("age")String age)  {
-		JSONObject jsonObject=new JSONObject();
-		jsonObject.put("name",name);
-		jsonObject.put("age",age);
-		return Response.status(200).entity(jsonObject.toString()).build();
-	}
+        String hostname = data.getHostname();
+        String contentType = data.getContentType();
 
-	@POST
-	@Path("/{param}")
-	public Response postMsg(@PathParam("param") String msg) {
-		String output = "POST:Jersey say : " + msg;
-		return Response.status(200).entity(output).build();
-	}
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("hostname", hostname);
+        jsonObject.put("contentType", contentType);
 
-	/**
-	 * Fill params map according to the operationType
-	 * @param currentPath :
-	 * @param dataCurrentPath
-	 */
-	public static void fillParamsMap(UrlInfo dataCurrentPath,io.swagger.models.Path currentPath) {
+        // add del chang post put ..
+        for (UrlInfo url : urls) {
+            if (url.getOperationType().equals(Tools.OperationType.GET.toString())) {
+                List<String> l = Tools.sendGet(url.getLink());
+                url.setReponseCode(l.get(0));
+                url.setReponseBody(l.get(1));
+            }
+            if (url.getOperationType().equals(Tools.OperationType.POST.toString())) {
+                List<String> l = Tools.sendPost(url.getLink(), url.getPostParam());
+                url.setReponseCode(l.get(0));
+                url.setReponseBody(l.get(1));
+            }
+            if (url.getOperationType().equals(Tools.OperationType.DELETE.toString())) {
+                List<String> l = Tools.sendDel(url.getLink());
+                url.setReponseCode(l.get(0));
+                url.setReponseBody(l.get(1));
+            }
+            if (url.getOperationType().equals(Tools.OperationType.PUT.toString())) {
+                List<String> l = Tools.sendPut(url.getLink(), url.getPostParam());
+                url.setReponseCode(l.get(0));
+                url.setReponseBody(l.get(1));
+            }
+
+            if (url.getCodes().contains(url.getReponseCode())) {
+                url.setValided(true);
+                url.setColor("success");
+            }
+
+            if ((url.getReponseCode().isEmpty() || "200".equals(url.getReponseCode()))&&!url.getCodes().contains(url.getReponseCode())) {
+                url.setColor("warning");
+            }
+
+        }
+
+        jsonObject.put("urls", urls);
+
+        logger.info("Result analyse + \n\t" + jsonObject);
+
+        return Response.status(200).entity(jsonObject.toString()).build();
+    }
+
+    @GET
+    @Path("saveConf")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response saveConf(@QueryParam("path") String path) throws Exception {
+        Map<String, String> map = new TreeMap<>();
+        map.put("base_url", "http://localhost:8080");
+        Tools.saveConf(map, path);
+        JSONObject ret = new JSONObject();
+        ret.put("msg", Tools.readConf(path).getProperty("base_url"));
+        return Response.status(200).entity(ret.toString()).build();
+    }
+
+    /**
+     * http://localhost:8080/api/v1/getPath
+     *
+     * @throws Exception
+     */
+    @GET
+    @Path("getPath")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPath(@QueryParam("url") String url) throws Exception {
+        Swagger swagger = new SwaggerParser().read(url);
+        List<UrlInfo> urlInfos = new ArrayList<>();
+
+        if (swagger != null) {
+            Map<String, io.swagger.models.Path> paths = swagger.getPaths();
+
+            for (String currentPathName : paths.keySet()) {
+                io.swagger.models.Path currentPath = paths.get(currentPathName);
+                logger.debug("getPath : current path ==>" + currentPathName);
+
+                UrlInfo dataCurrentPath = new UrlInfo();
+
+                if (currentPath.getGet() != null) {
+                    dataCurrentPath.setOperationType(Tools.OperationType.GET.toString());
+                    dataCurrentPath.setCodes(paths.get(currentPathName).getGet().getResponses().keySet());
+
+                    List<Parameter> listParams = currentPath.getGet().getParameters();
+                    fillData(dataCurrentPath, listParams, currentPathName, swagger);
+
+                    urlInfos.add(dataCurrentPath);
+                }
+
+                if (currentPath.getPost() != null) {
+                    dataCurrentPath = new UrlInfo();
+                    dataCurrentPath.setOperationType(Tools.OperationType.POST.toString());
+
+                    List<Parameter> listParams = currentPath.getPost().getParameters();
+                    fillDataPost(dataCurrentPath, listParams, currentPathName, swagger);
+                    urlInfos.add(dataCurrentPath);
+                }
 
 
-		List<Parameter> parameters;
+                if (currentPath.getDelete() != null) {
+                    dataCurrentPath = new UrlInfo();
+                    dataCurrentPath.setOperationType(Tools.OperationType.DELETE.toString());
+                    List<Parameter> listParams = currentPath.getDelete().getParameters();
+                    fillData(dataCurrentPath, listParams, currentPathName, swagger);
+                    urlInfos.add(dataCurrentPath);
+                }
 
-		switch (dataCurrentPath.getOperationType()) {
-		case "GET":
-			parameters = currentPath.getGet().getParameters();
-			break;
-		case "POST":
-			parameters = currentPath.getPost().getParameters();
-			break;
-		case "PUT":
-			parameters = currentPath.getPut().getParameters();
-			break;
-		case "DELETE":
-			parameters = currentPath.getDelete().getParameters();
-			break;
+                if (currentPath.getPut() != null) {
+                    dataCurrentPath = new UrlInfo();
+                    dataCurrentPath.setOperationType(Tools.OperationType.PUT.toString());
+                    dataCurrentPath.setCodes(paths.get(currentPathName).getPut().getResponses().keySet());
 
-		default:
-			return ;
-		}
+                    List<Parameter> listParams = currentPath.getPut().getParameters();
+                    fillData(dataCurrentPath, listParams, currentPathName, swagger);
+                    urlInfos.add(dataCurrentPath);
+                }
+            } // foreach
+            data.setHostname(swagger.getHost());
+            data.setUrls(urlInfos);
+        } else {
+            JSONObject ret = new JSONObject();
+            ret.put("msg", "SWAGGER FILE IS INVALID");
+            return Response.status(200).entity(ret.toString()).build();
+        }
+        logger.debug("getPath result : \n" + urlInfos);
+        logger.info("END of getPath :  " + urlInfos.size() + " url send to analyse function");
+        return Response.temporaryRedirect(new URI(this.base_url + "/api/v1/analyse")).build();
+    }
+
+    @GET
+    @Path("testCode")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response testReponseCode(@QueryParam("code") String code) throws Exception {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code", code);
+        return Response.status(Integer.parseInt(code)).entity(jsonObject.toString()).build();
+    }
+
+    @POST
+    @Path("testPost")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response testPost(@FormParam("name") String name, @FormParam("age") String age) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", name);
+        jsonObject.put("age", age);
+        return Response.status(200).entity(jsonObject.toString()).build();
+    }
+
+    @POST
+    @Path("/{param}")
+    public Response postMsg(@PathParam("param") String msg) {
+        String output = "POST:Jersey say : " + msg;
+        return Response.status(200).entity(output).build();
+    }
+
+    /**
+     * Fill params map according to the operationType
+     *
+     * @param currentPath     :
+     * @param dataCurrentPath
+     */
+    public static void fillParamsMap(UrlInfo dataCurrentPath, io.swagger.models.Path currentPath) {
 
 
-		for (Parameter param : parameters) {
-			String currentparaType = "";
+        List<Parameter> parameters;
 
-			if (param instanceof io.swagger.models.parameters.PathParameter) {
-				currentparaType = ((io.swagger.models.parameters.PathParameter) param).getType();
+        switch (dataCurrentPath.getOperationType()) {
+            case "GET":
+                parameters = currentPath.getGet().getParameters();
+                break;
+            case "POST":
+                parameters = currentPath.getPost().getParameters();
+                break;
+            case "PUT":
+                parameters = currentPath.getPut().getParameters();
+                break;
+            case "DELETE":
+                parameters = currentPath.getDelete().getParameters();
+                break;
 
-			} else if (param instanceof io.swagger.models.parameters.BodyParameter) {
-				currentparaType = "body";
-			}
+            default:
+                return;
+        }
 
-			switch (currentparaType) {
 
-			case "integer":
-				dataCurrentPath.getParamNameAndType().put(param.getName(),"integer");
-				break;
+        for (Parameter param : parameters) {
+            String currentparaType = "";
 
-			case "number":
-				dataCurrentPath.getParamNameAndType().put(param.getName(),"float");
-				break;
+            if (param instanceof io.swagger.models.parameters.PathParameter) {
+                currentparaType = ((io.swagger.models.parameters.PathParameter) param).getType();
 
-			case "boolean":
-				dataCurrentPath.getParamNameAndType().put(param.getName(),"boolean");
-				break;
+            } else if (param instanceof io.swagger.models.parameters.BodyParameter) {
+                currentparaType = "body";
+            }
 
-			case "string":
-				dataCurrentPath.getParamNameAndType().put(param.getName(),"string");
-				break;
+            switch (currentparaType) {
 
-			case "body":
-				if(((BodyParameter) param).getSchema() !=null && ((BodyParameter) param).getSchema().getReference() != null)
-				{
-					dataCurrentPath.getParamNameAndType().put(param.getName(),((BodyParameter) param).getSchema().getReference().replace("#/definitions/", ""));
-				}
-				else
-				{
-					dataCurrentPath.getParamNameAndType().put(param.getName(), "null");
-				}
-				break;
+                case "integer":
+                    dataCurrentPath.getParamNameAndType().put(param.getName(), "integer");
+                    break;
 
-			default:
-				return;
-			}
-		}
-	}
+                case "number":
+                    dataCurrentPath.getParamNameAndType().put(param.getName(), "float");
+                    break;
 
-	/**
-	 * Fill url info with generated data
-	 * @param urlInfo : 
-	 * @param listParam : list of parameters for the current operation type
-	 * @param currentPathName : name of the path to process
-	 * @param swagger
-	 */
-	void fillData(UrlInfo urlInfo, List<Parameter> listParam,String currentPathName,Swagger swagger)
-	{
-		io.swagger.models.Path path = swagger.getPaths().get(currentPathName);
-		Map<String,String> params=new TreeMap<>();
+                case "boolean":
+                    dataCurrentPath.getParamNameAndType().put(param.getName(), "boolean");
+                    break;
 
-		String linkBase = (swagger.getSchemes().get(0).toString().toLowerCase() + "://" + swagger.getHost() + swagger.getBasePath() + currentPathName);
+                case "string":
+                    dataCurrentPath.getParamNameAndType().put(param.getName(), "string");
+                    break;
 
-		for (Parameter param : listParam){
-			linkBase = linkBase.replace("{" + param.getName() + "}", Tools.generateTestData(param));
-			if(param.getIn().equals("formData") || param.getIn().equals("body"))
-			{
-				params.put(param.getName(),Tools.generateTestData(param));
-			}
-		}
-		urlInfo.setLink(linkBase);
-		urlInfo.setParameters(params);
+                case "body":
+                    if (((BodyParameter) param).getSchema() != null && ((BodyParameter) param).getSchema().getReference() != null) {
+                        dataCurrentPath.getParamNameAndType().put(param.getName(), ((BodyParameter) param).getSchema().getReference().replace("#/definitions/", ""));
+                    } else {
+                        dataCurrentPath.getParamNameAndType().put(param.getName(), "null");
+                    }
+                    break;
 
-		fillParamsMap(urlInfo, path);
-	}
+                default:
+                    return;
+            }
+        }
+    }
 
-	private void fillDataPost(UrlInfo dataCurrentPath, List<Parameter> listParam, String currentPathName,
-			Swagger swagger) {
-		io.swagger.models.Path path = swagger.getPaths().get(currentPathName);
-		Map<String,String> params=new TreeMap<>();
+    /**
+     * Fill url info with generated data
+     *
+     * @param urlInfo         :
+     * @param listParam       : list of parameters for the current operation type
+     * @param currentPathName : name of the path to process
+     * @param swagger
+     */
+    void fillData(UrlInfo urlInfo, List<Parameter> listParam, String currentPathName, Swagger swagger) {
+        io.swagger.models.Path path = swagger.getPaths().get(currentPathName);
+        Map<String, String> params = new TreeMap<>();
 
-		String linkBase = (swagger.getSchemes().get(0).toString().toLowerCase() + "://" + swagger.getHost() + swagger.getBasePath() + currentPathName);
+        String linkBase = (swagger.getSchemes().get(0).toString().toLowerCase() + "://" + swagger.getHost() + swagger.getBasePath() + currentPathName);
 
-		for (Parameter param : listParam){
-			linkBase = linkBase.replace("{" + param.getName() + "}", "1");
-			if("formData".equals(param.getIn()))
-			{
-				params.put(param.getName(),Tools.generateTestData(param));
-			}
-			else if("body".equals(param.getIn()))
-			{
-				dataCurrentPath.setPostParam(Tools.generatePostTestData(param));
-			}
-		}
-		dataCurrentPath.setLink(linkBase);
-		dataCurrentPath.setParameters(params);
+        for (Parameter param : listParam) {
+            linkBase = linkBase.replace("{" + param.getName() + "}", Tools.generateTestData(param));
+            if (param.getIn().equals("formData") || param.getIn().equals("body")) {
+                params.put(param.getName(), Tools.generateTestData(param));
+            }
+        }
+        urlInfo.setLink(linkBase);
+        urlInfo.setParameters(params);
 
-		fillParamsMap(dataCurrentPath, path);	
-	}
+        fillParamsMap(urlInfo, path);
+    }
+
+    private void fillDataPost(UrlInfo dataCurrentPath, List<Parameter> listParam, String currentPathName,
+                              Swagger swagger) {
+        io.swagger.models.Path path = swagger.getPaths().get(currentPathName);
+        Map<String, String> params = new TreeMap<>();
+
+        String linkBase = (swagger.getSchemes().get(0).toString().toLowerCase() + "://" + swagger.getHost() + swagger.getBasePath() + currentPathName);
+
+        for (Parameter param : listParam) {
+            linkBase = linkBase.replace("{" + param.getName() + "}", "1");
+            if ("formData".equals(param.getIn())) {
+                params.put(param.getName(), Tools.generateTestData(param));
+            } else if ("body".equals(param.getIn())) {
+                dataCurrentPath.setPostParam(Tools.generatePostTestData(param));
+            }
+        }
+        dataCurrentPath.setLink(linkBase);
+        dataCurrentPath.setParameters(params);
+
+        fillParamsMap(dataCurrentPath, path);
+    }
 }
