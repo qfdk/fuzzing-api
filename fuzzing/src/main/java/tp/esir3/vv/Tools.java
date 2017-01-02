@@ -123,6 +123,8 @@ public class Tools {
         request.addHeader("content-type", "application/json");
         request.setEntity(params);
         HttpResponse response=httpClient.execute(request);
+        logger.debug("\nSending 'POST' request to URL : " + url);
+        logger.debug("Response Code : " + response.getStatusLine().getStatusCode());
         List<String> list = new ArrayList<>();
 		list.add(String.valueOf(response.getStatusLine().getStatusCode()));
 		list.add(response.getStatusLine().getReasonPhrase());
@@ -194,13 +196,11 @@ public class Tools {
 	public static List<String> sendDel(String url) throws Exception {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 		HttpResponse response = httpClient.execute(new HttpDelete(url));
-		int responseCode = response.getStatusLine().getStatusCode();
 		logger.debug("\nSending 'Delete' request to URL : " + url);
-		logger.debug("Response Code : " + responseCode);
-		String body = printUrlContents(new URL(url),"DELETE");
+		logger.debug("Response Code : " + response.getStatusLine().getStatusCode());
 		List<String> list = new ArrayList<>();
-		list.add(String.valueOf(responseCode));
-		list.add(body);
+		list.add(String.valueOf(response.getStatusLine().getStatusCode()));
+		list.add(response.getStatusLine().getReasonPhrase());
 		return list;
 	}
 
