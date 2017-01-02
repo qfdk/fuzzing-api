@@ -109,11 +109,11 @@ public class Tools {
 	 * sendPOST
 	 *
 	 * @param url url
-	 * @param map map key-value
+	 * @param json json
 	 * @return code 200/404 etc...
 	 * @throws Exception
 	 */
-	public static List<String> sendPost(String url, Map<String, String> map) throws Exception {
+	public static List<String> sendPost(String url, JSONObject json) throws Exception {
 
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -121,44 +121,69 @@ public class Tools {
 		con.setRequestMethod("POST");
 		con.setRequestProperty("User-Agent", USER_AGENT);
 		con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+        con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
 		con.setRequestProperty("Content-Type", "application/json; charset=utf8");
 
-		StringBuilder sb = new StringBuilder();
-		for (String s : map.keySet()) {
-			sb.append(s).append("=").append(map.get(s)).append("&");
-		}
+        OutputStream os = con.getOutputStream();
+        os.write(json.toString().getBytes("UTF-8"));
+        os.close();
 
-		con.setDoOutput(true);
-		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-		if (!map.keySet().isEmpty()) {
-			String urlParameters = sb.toString().substring(0, sb.length() - 1);
-			logger.debug(urlParameters);
-
-			// Send post request
-			wr.writeBytes(urlParameters);
-		}
-		wr.flush();
-		wr.close();
 		int responseCode = con.getResponseCode();
 		logger.debug("Sending 'POST' request to URL : " + url);
 		logger.debug("Response Code : " + responseCode);
-//		String body = printUrlContents(obj,"POST");
-
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(con.getInputStream()));
-        String inputLine;
-        StringBuilder ss = new StringBuilder();
-
-        while ((inputLine = in.readLine()) != null) {
-            ss.append(inputLine);
-        }
-        in.close();
+		String body = printUrlContents(obj,"POST");
 		List<String> list = new ArrayList<>();
 		list.add(String.valueOf(responseCode));
-		list.add(ss.toString());
+		list.add(body);
 		return list;
 	}
 
+
+
+    /**
+     * sendPOST
+     *
+     * @param url url
+     * @param map map key-value
+     * @return code 200/404 etc...
+     * @throws Exception
+     */
+    public static List<String> sendPost(String url, Map<String, String> map) throws Exception {
+
+        URL obj = new URL(url);
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+        //add reuqest header
+        con.setRequestMethod("POST");
+        con.setRequestProperty("User-Agent", USER_AGENT);
+        con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+        con.setRequestProperty("Content-Type", "application/json; charset=utf8");
+
+        StringBuilder sb = new StringBuilder();
+        for (String s : map.keySet()) {
+            sb.append(s).append("=").append(map.get(s)).append("&");
+        }
+
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        if (!map.keySet().isEmpty()) {
+            String urlParameters = sb.toString().substring(0, sb.length() - 1);
+            logger.debug(urlParameters);
+
+            // Send post request
+            wr.writeBytes(urlParameters);
+        }
+        wr.flush();
+        wr.close();
+        int responseCode = con.getResponseCode();
+        logger.debug("Sending 'POST' request to URL : " + url);
+        logger.debug("Response Code : " + responseCode);
+		String body = printUrlContents(obj,"POST");
+
+        List<String> list = new ArrayList<>();
+        list.add(String.valueOf(responseCode));
+        list.add(body);
+        return list;
+    }
 	/**
 	 * send Delete request
 	 *

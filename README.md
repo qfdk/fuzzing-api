@@ -11,6 +11,8 @@ uses the json file to generate the code.
 git clone https://github.com/qfdk/fuzzing-api
 cd fuzzing-api/fuzzing
 mvn install && mvn jetty:run
+#test
+mvn test
 ```
 
 You should see the web ui via your browser in this address **http://localhost:8080**.
