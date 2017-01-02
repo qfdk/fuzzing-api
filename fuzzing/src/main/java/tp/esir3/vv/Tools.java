@@ -1,4 +1,4 @@
-package esir3.vv;
+package tp.esir3.vv;
 
 import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
 

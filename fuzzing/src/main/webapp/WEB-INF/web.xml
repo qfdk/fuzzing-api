@@ -10,7 +10,7 @@
 		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
 		<init-param>
 			<param-name>com.sun.jersey.config.property.packages</param-name>
-			<param-value>esir3.vv</param-value>
+			<param-value>tp.esir3.vv</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>

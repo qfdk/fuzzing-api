@@ -3,7 +3,7 @@
  */
 package fuzzing;
 
-import esir3.vv.Tools;
+import tp.esir3.vv.Tools;
 import org.json.JSONObject;
 import org.junit.Test;
 

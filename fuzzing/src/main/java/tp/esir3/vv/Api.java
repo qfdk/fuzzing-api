@@ -1,5 +1,4 @@
-package esir3.vv;
-import esir3.vv.Tools.OperationType;
+package tp.esir3.vv;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
@@ -138,7 +137,7 @@ public class Api {
 				UrlInfo dataCurrentPath = new UrlInfo(); 
 
 				if (currentPath.getGet() != null) {
-					dataCurrentPath.setOperationType(OperationType.GET.toString());
+					dataCurrentPath.setOperationType(Tools.OperationType.GET.toString());
 					dataCurrentPath.setCodes(paths.get(currentPathName).getGet().getResponses().keySet());
 			
 					List<Parameter> listParams = currentPath.getGet().getParameters();
@@ -149,7 +148,7 @@ public class Api {
 
 				if (currentPath.getPost() != null) {
 					dataCurrentPath = new UrlInfo();
-					dataCurrentPath.setOperationType(OperationType.POST.toString());
+					dataCurrentPath.setOperationType(Tools.OperationType.POST.toString());
 
 					List<Parameter> listParams = currentPath.getPost().getParameters();
 					fillData(dataCurrentPath, listParams,currentPathName,swagger );
@@ -159,7 +158,7 @@ public class Api {
 
 				if (currentPath.getDelete() != null) {
 					dataCurrentPath = new UrlInfo();
-					dataCurrentPath.setOperationType(OperationType.DELETE.toString());
+					dataCurrentPath.setOperationType(Tools.OperationType.DELETE.toString());
 					List<Parameter> listParams = currentPath.getDelete().getParameters();
 					fillData(dataCurrentPath, listParams,currentPathName,swagger );
 					urlInfos.add(dataCurrentPath);
@@ -167,7 +166,7 @@ public class Api {
 
 				if (currentPath.getPut() != null) {
 					dataCurrentPath = new UrlInfo();
-					dataCurrentPath.setOperationType(OperationType.PUT.toString());
+					dataCurrentPath.setOperationType(Tools.OperationType.PUT.toString());
 					dataCurrentPath.setCodes(paths.get(currentPathName).getPut().getResponses().keySet());
 
 					List<Parameter> listParams = currentPath.getPut().getParameters();

@@ -1,6 +1,5 @@
-package esir3.vv;
+package tp.esir3.vv;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FuzzingData {
