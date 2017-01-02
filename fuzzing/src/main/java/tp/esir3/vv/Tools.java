@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.models.parameters.PathParameter;
 
 /**
  * Created by qfdk on 2016/11/16.
@@ -31,7 +32,7 @@ public class Tools {
 	// HTTP GET request
 	public static List<String> sendGet(String url) throws Exception {
 		URL obj = new URL(url);
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		// optional default is GET
 		con.setRequestMethod("GET");
 		//add request header
@@ -121,15 +122,15 @@ public class Tools {
 		con.setRequestMethod("POST");
 		con.setRequestProperty("User-Agent", USER_AGENT);
 		con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-        con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+		con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
 		con.setRequestProperty("Content-Type", "application/json; charset=utf8");
-		
+
 		con.setDoInput(true);
 		con.setDoOutput(true);
-		
-        OutputStream os = con.getOutputStream();
-        os.write(json.toString().getBytes("UTF-8"));
-        os.close();
+
+		OutputStream os = con.getOutputStream();
+		os.write(json.toString().getBytes("UTF-8"));
+		os.close();
 
 		int responseCode = con.getResponseCode();
 		logger.debug("Sending 'POST' request to URL : " + url);
@@ -143,50 +144,50 @@ public class Tools {
 
 
 
-    /**
-     * sendPOST
-     *
-     * @param url url
-     * @param map map key-value
-     * @return code 200/404 etc...
-     * @throws Exception
-     */
-    public static List<String> sendPost(String url, Map<String, String> map) throws Exception {
+	/**
+	 * sendPOST
+	 *
+	 * @param url url
+	 * @param map map key-value
+	 * @return code 200/404 etc...
+	 * @throws Exception
+	 */
+	public static List<String> sendPost(String url, Map<String, String> map) throws Exception {
 
-        URL obj = new URL(url);
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-        //add reuqest header
-        con.setRequestMethod("POST");
-        con.setRequestProperty("User-Agent", USER_AGENT);
-        con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-        con.setRequestProperty("Content-Type", "application/json; charset=utf8");
+		URL obj = new URL(url);
+		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+		//add reuqest header
+		con.setRequestMethod("POST");
+		con.setRequestProperty("User-Agent", USER_AGENT);
+		con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+		con.setRequestProperty("Content-Type", "application/json; charset=utf8");
 
-        StringBuilder sb = new StringBuilder();
-        for (String s : map.keySet()) {
-            sb.append(s).append("=").append(map.get(s)).append("&");
-        }
+		StringBuilder sb = new StringBuilder();
+		for (String s : map.keySet()) {
+			sb.append(s).append("=").append(map.get(s)).append("&");
+		}
 
-        con.setDoOutput(true);
-        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-        if (!map.keySet().isEmpty()) {
-            String urlParameters = sb.toString().substring(0, sb.length() - 1);
-            logger.debug(urlParameters);
+		con.setDoOutput(true);
+		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+		if (!map.keySet().isEmpty()) {
+			String urlParameters = sb.toString().substring(0, sb.length() - 1);
+			logger.debug(urlParameters);
 
-            // Send post request
-            wr.writeBytes(urlParameters);
-        }
-        wr.flush();
-        wr.close();
-        int responseCode = con.getResponseCode();
-        logger.debug("Sending 'POST' request to URL : " + url);
-        logger.debug("Response Code : " + responseCode);
+			// Send post request
+			wr.writeBytes(urlParameters);
+		}
+		wr.flush();
+		wr.close();
+		int responseCode = con.getResponseCode();
+		logger.debug("Sending 'POST' request to URL : " + url);
+		logger.debug("Response Code : " + responseCode);
 		String body = printUrlContents(obj,"POST");
 
-        List<String> list = new ArrayList<>();
-        list.add(String.valueOf(responseCode));
-        list.add(body);
-        return list;
-    }
+		List<String> list = new ArrayList<>();
+		list.add(String.valueOf(responseCode));
+		list.add(body);
+		return list;
+	}
 	/**
 	 * send Delete request
 	 *
@@ -252,22 +253,22 @@ public class Tools {
 	 */
 	private static String printUrlContents(URL url,String type) {
 		try {
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod(type);
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			con.setRequestMethod(type);
 
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuilder ss = new StringBuilder();
-            while ((inputLine = in.readLine()) != null) {
-                ss.append(inputLine);
-            }
-            in.close();
-            return ss.toString();
-        }catch (Exception e)
-        {
-            return "Something was wrong!";
-        }
+			BufferedReader in = new BufferedReader(
+					new InputStreamReader(con.getInputStream()));
+			String inputLine;
+			StringBuilder ss = new StringBuilder();
+			while ((inputLine = in.readLine()) != null) {
+				ss.append(inputLine);
+			}
+			in.close();
+			return ss.toString();
+		}catch (Exception e)
+		{
+			return "Something was wrong!";
+		}
 	}
 
 	/**
@@ -308,7 +309,7 @@ public class Tools {
 
 		return String.valueOf((int) (Math.random() * max));
 	}
-	
+
 
 	/**
 	 * generate Test
@@ -366,7 +367,29 @@ public class Tools {
 	}
 
 	public static JSONObject generatePostTestData(Parameter param) {
-		JSONObject r = new JSONObject("{ \"id\": 0, \"category\": { \"id\": 0, \"name\": \"string\" }, \"name\": \"doggie\", \"photoUrls\": [ \"string\" ], \"tags\": [ { \"id\": 0, \"name\": \"string\" } ], \"status\": \"string\" }");
+
+		String type ="";
+		if (param instanceof io.swagger.models.parameters.PathParameter) 
+		{
+			type = ((PathParameter) param).getType();
+		}
+		JSONObject r = new JSONObject();
+
+		if(type!=null)
+		{
+			switch (type) {
+			case "Pet":
+				r = new JSONObject("{ \"id\": 0, \"category\": { \"id\": 0, \"name\": \"string\" }, \"name\": \"doggie\", \"photoUrls\": [ \"string\" ], \"tags\": [ { \"id\": 0, \"name\": \"string\" } ], \"status\": \"string\" }");
+				break;
+			case "User":
+				r = new JSONObject("{ \"id\": 0, \"username\": \"string\", \"firstName\": \"string\", \"lastName\": \"string\", \"email\": \"string\", \"password\": \"string\", \"phone\": \"string\", \"userStatus\": 0 }");
+				break;
+
+			default:
+				r = new JSONObject("{ \"id\": 0, \"category\": { \"id\": 0, \"name\": \"string\" }, \"name\": \"doggie\", \"photoUrls\": [ \"string\" ], \"tags\": [ { \"id\": 0, \"name\": \"string\" } ], \"status\": \"string\" }");
+				break;
+			}
+		}
 		return r; 
 	}
 
