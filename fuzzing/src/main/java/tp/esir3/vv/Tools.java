@@ -328,6 +328,15 @@ public class Tools {
 		} else if (param instanceof io.swagger.models.parameters.BodyParameter) {
 			generatedData = generateBodyParameter((BodyParameter)param);
 		}
+		else{
+			if("year".equals(param.getName()) || "id".equals(param.getName()))
+			{
+				generatedData =  randomInteger(2017);
+			}
+			else{
+				generatedData =  randomString(5);
+			}
+		}
 		return generatedData;
 	}
 
