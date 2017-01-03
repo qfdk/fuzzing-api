@@ -209,6 +209,23 @@ public class Api {
         return Response.status(200).entity(jsonObject.toString()).build();
     }
 
+    @PUT
+    @Path("testPut")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response testPut(@FormParam("name") String name, @FormParam("age") String age) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", name);
+        jsonObject.put("age", age);
+        return Response.status(200).entity(jsonObject.toString()).build();
+    }
+
+    @DELETE
+    @Path("testDel")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response testDel() {
+        return Response.status(200).entity("OK").build();
+    }
+
     @POST
     @Path("/{param}")
     public Response postMsg(@PathParam("param") String msg) {

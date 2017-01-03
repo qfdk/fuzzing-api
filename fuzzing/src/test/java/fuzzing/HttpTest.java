@@ -38,7 +38,7 @@ public class HttpTest {
     public void testSendGet4() throws Exception {
         String url = "http://localhost:8080/api/v1/getStatus";
         String ret = Tools.sendGet(url).get(0);
-        assertTrue(ret.equals("200")&&"{status:ok,msg:api works!}".equals(Tools.sendGet(url).get(1)));
+        assertTrue(ret.equals("200") && "{status:ok,msg:api works!}".equals(Tools.sendGet(url).get(1)));
     }
 
     @Test
@@ -59,29 +59,61 @@ public class HttpTest {
 
     @Test
     public void testSendPost1() throws Exception {
-        JSONObject jsonObject=new JSONObject();
-        jsonObject.put("name","coucou");
-        jsonObject.put("age","20");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", "coucou");
+        jsonObject.put("age", "20");
 
-        Map<String,String> map=new TreeMap<>();
-        map.put("name","coucou");
-        map.put("age","20");
-        List<String> resp = new ArrayList<>();
-        resp= Tools.sendPost("http://localhost:8080/api/v1/testPost",map);
+        Map<String, String> map = new TreeMap<>();
+        map.put("name", "coucou");
+        map.put("age", "20");
+        List<String> resp = Tools.sendPost("http://localhost:8080/api/v1/testPost", map);
         assertTrue(resp.get(0).equals("200"));
     }
 
     @Test
     public void testSendPost2() throws Exception {
-        JSONObject jsonObject=new JSONObject();
-        jsonObject.put("name","coucou");
-        jsonObject.put("age","20");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", "coucou");
+        jsonObject.put("age", "20");
 
-        Map<String,String> map=new TreeMap<>();
-        map.put("name","coucou");
-        map.put("age","20");
-        List<String> resp = new ArrayList<>();
-        resp= Tools.sendPost("http://localhost:8080/api/v1/testPost",map);
+        Map<String, String> map = new TreeMap<>();
+        map.put("name", "coucou");
+        map.put("age", "20");
+        List<String> resp = Tools.sendPost("http://localhost:8080/api/v1/testPost", map);
         assertTrue(resp.get(1).equals(jsonObject.toString()));
+    }
+
+    @Test
+    public void testSendPut1() throws Exception {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", "coucou");
+        jsonObject.put("age", "20");
+        List<String> resp = Tools.sendPut("http://localhost:8080/api/v1/testPut", jsonObject);
+        System.out.println(resp);
+        assertTrue("OK".equals(resp.get(1)));
+    }
+
+    @Test
+    public void testSendPut2() throws Exception {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", "coucou");
+        jsonObject.put("age", "20");
+        List<String> resp = Tools.sendPut("http://localhost:8080/api/v1/testPut", jsonObject);
+        System.out.println(resp);
+        assertTrue("200".equals(resp.get(0)));
+    }
+
+    @Test
+    public void tetSendDel1() throws Exception {
+        List<String> resp = Tools.sendDel("http://localhost:8080/api/v1/testDel");
+        System.out.println(resp);
+        assertTrue("200".equals(resp.get(0)));
+    }
+
+    @Test
+    public void tetSendDel2() throws Exception {
+        List<String> resp = Tools.sendDel("http://localhost:8080/api/v1/testDel");
+        System.out.println(resp);
+        assertTrue("OK".equals(resp.get(1)));
     }
 }

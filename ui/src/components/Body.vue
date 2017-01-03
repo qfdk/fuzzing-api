@@ -29,19 +29,19 @@
           <table class="table table-condensed">
             <thead>
               <tr>
-                <th>Type</th>
-                <th>Waiting code</th>
-                <th>Reponse code</th>
+                <th>ReqestType</th>
+                <th>WaitingCode</th>
+                <th>ReponseCode</th>
                 <th>Parameters</th>
-                <th>Parameter name & type</th>
-                <th>Post json</th>
+                <th>ParameterType</th>
+                <th>PostParameters</th>
                 <th>Reponse</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>{{res.operationType}}</td>
-                <td>{{res.codes}}</td> 
+                <td>{{res.codes}}</td>
                 <td>{{res.reponseCode}}</td>
                 <td>{{res.parameters}}</td>
                 <td>{{res.paramNameAndType}}</td>
