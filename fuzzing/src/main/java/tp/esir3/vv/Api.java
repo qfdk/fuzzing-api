@@ -144,7 +144,6 @@ public class Api {
                 if (currentPath.getGet() != null) {
                     dataCurrentPath.setOperationType(Tools.OperationType.GET.toString());
                     dataCurrentPath.setCodes(paths.get(currentPathName).getGet().getResponses().keySet());
-
                     List<Parameter> listParams = currentPath.getGet().getParameters();
                     fillData(dataCurrentPath, listParams, currentPathName, swagger);
 
@@ -154,7 +153,7 @@ public class Api {
                 if (currentPath.getPost() != null) {
                     dataCurrentPath = new UrlInfo();
                     dataCurrentPath.setOperationType(Tools.OperationType.POST.toString());
-
+                    dataCurrentPath.setCodes(paths.get(currentPathName).getGet().getResponses().keySet());
                     List<Parameter> listParams = currentPath.getPost().getParameters();
                     fillDataPost(dataCurrentPath, listParams, currentPathName, swagger);
                     urlInfos.add(dataCurrentPath);
@@ -163,6 +162,7 @@ public class Api {
 
                 if (currentPath.getDelete() != null) {
                     dataCurrentPath = new UrlInfo();
+                    dataCurrentPath.setCodes(paths.get(currentPathName).getDelete().getResponses().keySet());
                     dataCurrentPath.setOperationType(Tools.OperationType.DELETE.toString());
                     List<Parameter> listParams = currentPath.getDelete().getParameters();
                     fillData(dataCurrentPath, listParams, currentPathName, swagger);
@@ -173,7 +173,6 @@ public class Api {
                     dataCurrentPath = new UrlInfo();
                     dataCurrentPath.setOperationType(Tools.OperationType.PUT.toString());
                     dataCurrentPath.setCodes(paths.get(currentPathName).getPut().getResponses().keySet());
-
                     List<Parameter> listParams = currentPath.getPut().getParameters();
                     fillData(dataCurrentPath, listParams, currentPathName, swagger);
                     urlInfos.add(dataCurrentPath);
