@@ -38,7 +38,7 @@ public class HttpTest {
     public void testSendGet4() throws Exception {
         String url = "http://localhost:8080/api/v1/getStatus";
         String ret = Tools.sendGet(url).get(0);
-        assertTrue(ret.equals("200") && "{status:ok,msg:api works!}".equals(Tools.sendGet(url).get(1)));
+        assertTrue(ret.equals("200") && "OK".equals(Tools.sendGet(url).get(1)));
     }
 
     @Test
