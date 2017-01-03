@@ -26,6 +26,10 @@ public class ToolsTest {
 
 		try { 
 			Integer.parseInt(Tools.generateTestData(pp)); 
+			Integer.parseInt(Tools.generateTestData(pp)); 
+			Integer.parseInt(Tools.generateTestData(pp)); 
+			Integer.parseInt(Tools.generateTestData(pp)); 
+			
 			ret = true;
 		} catch(NumberFormatException e) { 
 			e.printStackTrace();
@@ -38,6 +42,39 @@ public class ToolsTest {
 			assertTrue(ret);
 		}
 	}
+	
+	/**
+	 * Should  generate always number 
+	 */
+	@Test
+	public void testRandomNumber(){
+
+		io.swagger.models.parameters.PathParameter pp = new PathParameter();
+		pp.setType("number");
+
+		boolean ret = false;
+
+		try { 
+			// 4 times gest data
+			Integer.parseInt(Tools.generateTestData(pp)); 
+			Integer.parseInt(Tools.generateTestData(pp)); 
+			Integer.parseInt(Tools.generateTestData(pp)); 
+			Integer.parseInt(Tools.generateTestData(pp)); 
+			Integer.parseInt(Tools.generateTestData(pp)); 
+
+			ret = true;
+		} catch(NumberFormatException e) { 
+			e.printStackTrace();
+			ret = false; 
+		} catch(NullPointerException e) {
+			e.printStackTrace();
+			ret =  false;
+		}
+		finally {
+			assertTrue(ret);
+		}
+	}
+
 
 	/**
 	 * Should not generate always the same data 
@@ -64,6 +101,20 @@ public class ToolsTest {
 		s2  = Tools.generateTestData(pp);
 		
 		assertTrue("not always data generated, case number", !s1.equals(s2));
+		
+	}
+	
+	/**
+	 * Should generate a non null data even if type is null in spec 
+	 */
+	@Test
+	public void testRandomDataForNullType(){
+
+		io.swagger.models.parameters.PathParameter pp = new PathParameter();
+		
+		String s1 = Tools.generateTestData(pp);
+		
+		assertTrue("shoud generate non empty data", !s1.isEmpty());
 		
 	}
 

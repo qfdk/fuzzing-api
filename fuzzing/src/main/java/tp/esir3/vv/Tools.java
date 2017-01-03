@@ -20,6 +20,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 
+import javax.validation.groups.Default;
+
 import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
 
 /**
@@ -261,6 +263,7 @@ public class Tools {
         }
     }
 
+
     /**
      * generate String
      *
@@ -309,14 +312,20 @@ public class Tools {
     public static String generateTestData(Parameter param) {
 
         String generatedData = "";
-        if (param instanceof io.swagger.models.parameters.PathParameter) {
+        if (param instanceof io.swagger.models.parameters.PathParameter)
+        {
             String type = ((io.swagger.models.parameters.PathParameter) param).getType();
+
+            if(type == null)
+            {
+                type = "";
+            }
 
             switch (type) {
 
                 case "integer":
                 case "number":
-                    generatedData = randomInteger(100);
+                    generatedData =  randomInteger(100);
                     break;
 
                 case "boolean":
@@ -324,16 +333,21 @@ public class Tools {
                     break;
 
                 case "string":
-                    generatedData = randomString(10);
+                    generatedData =  randomString(10);
                     break;
+                default :
+                    generatedData =  randomString(10);
             }
         } else if (param instanceof io.swagger.models.parameters.BodyParameter) {
-            generatedData = generateBodyParameter((BodyParameter) param);
-        } else {
-            if ("year".equals(param.getName()) || "id".equals(param.getName())) {
-                generatedData = randomInteger(2017);
-            } else {
-                generatedData = randomString(5);
+            generatedData = generateBodyParameter((BodyParameter)param);
+        }
+        else{
+            if("year".equals(param.getName()) || "id".equals(param.getName()))
+            {
+                generatedData =  randomInteger(2017);
+            }
+            else{
+                generatedData =  randomString(5);
             }
         }
         return generatedData;
@@ -341,7 +355,8 @@ public class Tools {
 
     private static String generateBodyParameter(BodyParameter param) {
 
-        if (param.getSchema() != null && param.getSchema().getReference() != null) {
+        if (param.getSchema() != null &&  param.getSchema().getReference() !=null)
+        {
             String type = param.getSchema().getReference().replace("#/definitions/", "");
 
             switch (type) {
@@ -353,21 +368,25 @@ public class Tools {
                     break;
             }
             return "default";
-        } else {
+        }
+        else
+        {
             return new JSONObject().put("body", "default").toString();
         }
     }
 
     public static JSONObject generatePostTestData(Parameter param) {
 
-        String type = "";
-        if (param instanceof io.swagger.models.parameters.PathParameter) {
+        String type ="";
+        if (param instanceof io.swagger.models.parameters.PathParameter)
+        {
             type = ((PathParameter) param).getType();
         }
         JSONObject r = new JSONObject().put(param.getName(), "default");
 
 
-        if (type != null) {
+        if(type!=null)
+        {
             switch (type) {
                 case "Pet":
                     r = new JSONObject("{ \"id\": 0, \"category\": { \"id\": 0, \"name\": \"string\" }, \"name\": \"doggie\", \"photoUrls\": [ \"string\" ], \"tags\": [ { \"id\": 0, \"name\": \"string\" } ], \"status\": \"string\" }");
@@ -383,6 +402,4 @@ public class Tools {
         }
         return r;
     }
-
-
 }
