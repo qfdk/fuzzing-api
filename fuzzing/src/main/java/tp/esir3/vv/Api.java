@@ -153,7 +153,7 @@ public class Api {
                 if (currentPath.getPost() != null) {
                     dataCurrentPath = new UrlInfo();
                     dataCurrentPath.setOperationType(Tools.OperationType.POST.toString());
-                    dataCurrentPath.setCodes(paths.get(currentPathName).getGet().getResponses().keySet());
+                    dataCurrentPath.setCodes(paths.get(currentPathName).getPost().getResponses().keySet());
                     List<Parameter> listParams = currentPath.getPost().getParameters();
                     fillDataPost(dataCurrentPath, listParams, currentPathName, swagger);
                     urlInfos.add(dataCurrentPath);
