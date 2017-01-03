@@ -19,6 +19,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 
+import javax.validation.groups.Default;
+
 import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
 
 /**
@@ -309,7 +311,12 @@ public class Tools {
 		if (param instanceof io.swagger.models.parameters.PathParameter) 
 		{
 			String type = ((io.swagger.models.parameters.PathParameter) param).getType();
-
+			
+			if(type == null)
+			{
+				type = "";
+			}
+			
 			switch (type) {
 
 			case "integer":
@@ -324,6 +331,8 @@ public class Tools {
 			case "string":
 				generatedData =  randomString(10);
 				break;
+			default : 
+				generatedData =  randomString(10);
 			}
 		} else if (param instanceof io.swagger.models.parameters.BodyParameter) {
 			generatedData = generateBodyParameter((BodyParameter)param);
